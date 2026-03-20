@@ -2,6 +2,7 @@ import { GameContainer, Header, SudokuBoard, NumberPad, ControlPanel } from '@/c
 import type { SudokuCell, Position, Difficulty, SudokuGrid } from '@/types/sudoku'
 import { useState, useCallback } from 'react'
 import { generateSudokuPuzzle } from '@/algorithms/sudokuGenerator'
+import { useTimer } from '@/hooks/useTimer'
 
 function createInitialBoard(puzzle: SudokuGrid): SudokuCell[][] {
   return puzzle.map((row, rowIndex) =>
@@ -15,6 +16,8 @@ function createInitialBoard(puzzle: SudokuGrid): SudokuCell[][] {
   )
 }
 
+const MAX_ERRORS = 3
+
 function App() {
   const [difficulty, setDifficulty] = useState<Difficulty>('medium')
   const [gameData, setGameData] = useState(() => {
@@ -26,6 +29,12 @@ function App() {
   })
   const [selectedCell, setSelectedCell] = useState<Position | null>(null)
   const [isGameComplete, setIsGameComplete] = useState(false)
+  const [timer, setTimer] = useState(0)
+  const [errors, setErrors] = useState(0)
+
+  useTimer(!isGameComplete, useCallback(() => {
+    setTimer(prev => prev + 1)
+  }, []))
 
   const handleCellClick = useCallback((row: number, col: number) => {
     if (!gameData.board[row][col].isInitial) {
@@ -38,19 +47,24 @@ function App() {
     const { row, col } = selectedCell
     if (gameData.board[row][col].isInitial) return
 
+    const isError = gameData.solution[row][col] !== number
+    
+    if (isError) {
+      setErrors(prev => prev + 1)
+    }
+
     setGameData(prev => ({
       ...prev,
       board: prev.board.map((r, ri) =>
         r.map((cell, ci) => {
           if (ri === row && ci === col) {
-            const isError = prev.solution[row][col] !== number
             return { ...cell, value: number, isError }
           }
           return cell
         })
       ),
     }))
-  }, [selectedCell, gameData.board])
+  }, [selectedCell, gameData.board, gameData.solution])
 
   const handleDeleteClick = useCallback(() => {
     if (!selectedCell) return
@@ -79,6 +93,8 @@ function App() {
     setDifficulty(newDifficulty)
     setSelectedCell(null)
     setIsGameComplete(false)
+    setTimer(0)
+    setErrors(0)
   }, [])
 
   const handleReset = useCallback(() => {
@@ -94,6 +110,8 @@ function App() {
     }))
     setSelectedCell(null)
     setIsGameComplete(false)
+    setTimer(0)
+    setErrors(0)
   }, [])
 
   const handleHint = useCallback((row: number, col: number, value: number) => {
@@ -128,20 +146,15 @@ function App() {
     setIsGameComplete(true)
   }, [])
 
-  const difficultyLabels: Record<Difficulty, string> = {
-    easy: '简单',
-    medium: '中等',
-    hard: '困难',
-  }
-
   return (
     <div className="min-h-screen bg-gradient-main flex items-center justify-center p-4">
       <GameContainer>
         <div className="flex flex-col gap-6">
           <Header 
-            timer="05:23" 
-            errors="1/3" 
-            difficulty={difficultyLabels[difficulty]} 
+            timer={timer}
+            errors={errors}
+            maxErrors={MAX_ERRORS}
+            difficulty={difficulty}
           />
           <ControlPanel
             selectedCell={selectedCell}
