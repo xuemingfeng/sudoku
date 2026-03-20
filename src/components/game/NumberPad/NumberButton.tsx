@@ -22,7 +22,8 @@ export const NumberButton = memo(function NumberButton({
   return (
     <button
       className={`
-        w-[60px] h-[60px] flex flex-col items-center justify-center
+        number-button touch-optimized btn-hover-lift
+        flex flex-col items-center justify-center
         rounded-xl transition-all duration-200
         ${isDisabled
           ? 'bg-slate-100 text-slate-300 cursor-not-allowed'
@@ -33,8 +34,10 @@ export const NumberButton = memo(function NumberButton({
       aria-label={`数字 ${number}，剩余 ${remainingCount} 个`}
       aria-disabled={isDisabled}
     >
-      <span className="text-[28px] font-bold leading-none">{number}</span>
-      <span className={`text-[14px] font-semibold mt-1 ${isDisabled ? 'text-slate-300' : 'text-slate-500'}`}>
+      <span className="font-bold leading-none" style={{ fontSize: 'var(--font-size-number)' }}>
+        {number}
+      </span>
+      <span className={`font-semibold mt-1 ${isDisabled ? 'text-slate-300' : 'text-slate-500'}`} style={{ fontSize: 'var(--font-size-remaining)' }}>
         {remainingCount}
       </span>
     </button>

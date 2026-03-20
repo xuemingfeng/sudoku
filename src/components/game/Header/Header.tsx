@@ -31,21 +31,21 @@ export const Header = memo(function Header({
   return (
     <div className="flex items-center justify-between w-full">
       <div className="flex items-center">
-        <i className="ri-game-line text-[32px] text-blue-600" />
-        <span className="ml-3 text-[28px] font-bold text-slate-800">{title}</span>
+        <i className="ri-game-line text-2xl sm:text-3xl text-blue-600" />
+        <span className="ml-2 sm:ml-3 text-xl sm:text-2xl lg:text-[28px] font-bold text-slate-800">{title}</span>
       </div>
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-3 sm:gap-4 lg:gap-6">
         <div className="flex items-center">
-          <i className="ri-time-line text-xl text-slate-500" />
-          <span className="ml-2 text-xl font-semibold text-slate-700">{formatTime(timer)}</span>
+          <i className="ri-time-line text-lg sm:text-xl text-slate-500" />
+          <span className="ml-1 sm:ml-2 text-base sm:text-lg lg:text-xl font-semibold text-slate-700">{formatTime(timer)}</span>
         </div>
         <div className="flex items-center">
-          <i className="ri-close-circle-line text-xl text-red-500" />
-          <span className="ml-2 text-xl font-semibold text-red-500">{errors}/{maxErrors}</span>
+          <i className="ri-close-circle-line text-lg sm:text-xl text-red-500" />
+          <span className="ml-1 sm:ml-2 text-base sm:text-lg lg:text-xl font-semibold text-red-500">{errors}/{maxErrors}</span>
         </div>
         <div className="flex items-center">
-          <i className="ri-bar-chart-line text-xl text-purple-600" />
-          <span className="ml-2 text-xl font-semibold text-purple-600">{difficultyLabels[difficulty]}</span>
+          <i className="ri-bar-chart-line text-lg sm:text-xl text-purple-600" />
+          <span className="ml-1 sm:ml-2 text-base sm:text-lg lg:text-xl font-semibold text-purple-600">{difficultyLabels[difficulty]}</span>
         </div>
       </div>
     </div>

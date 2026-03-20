@@ -2,6 +2,7 @@
 @import './styles/fonts.css';
 @import 'remixicon/fonts/remixicon.css';
 @import './styles/variables.css';
+@import './styles/responsive.css';
 
 @theme {
   --font-family-sans: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
@@ -31,14 +32,23 @@
 
 html {
   font-family: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  touch-action: manipulation;
+}
+
+@supports (height: 100dvh) {
+  body {
+    min-height: 100dvh;
+  }
 }
 
 .bg-gradient-main {
@@ -156,4 +166,165 @@ body {
 
 .animate-page-exit {
   animation: page-exit 0.2s ease-out forwards;
+}
+
+@keyframes cell-select {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes cell-fill {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-4px);
+  }
+  40% {
+    transform: translateX(4px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes pulse-highlight {
+  0%, 100% {
+    background-color: var(--color-cell-highlight);
+  }
+  50% {
+    background-color: rgba(254, 243, 199, 0.5);
+  }
+}
+
+@keyframes button-click {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.animate-cell-select {
+  animation: cell-select 150ms ease-out forwards;
+}
+
+.animate-cell-fill {
+  animation: cell-fill 150ms ease-out forwards;
+}
+
+.animate-shake {
+  animation: shake 300ms ease-out forwards;
+}
+
+.animate-pulse-highlight {
+  animation: pulse-highlight 500ms ease-in-out infinite;
+}
+
+.animate-button-click {
+  animation: button-click 100ms ease-out forwards;
+}
+
+.animate-confetti {
+  animation: confetti-fall 1s ease-out forwards;
+}
+
+.btn-hover-lift {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.btn-hover-lift:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.cell-transition {
+  transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.number-enter {
+  animation: cell-fill 150ms ease-out forwards;
+}
+
+@media (max-width: 640px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 375px) {
+  html {
+    font-size: 13px;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+input:focus,
+button:focus {
+  outline: 2px solid var(--color-info);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

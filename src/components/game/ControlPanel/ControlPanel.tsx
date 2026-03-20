@@ -95,7 +95,7 @@ export function ControlPanel({
 
   return (
     <>
-      <div className="flex gap-3 w-full">
+      <div className="flex gap-2 sm:gap-3 w-full">
         <ControlButton
           icon="ri-add-line"
           label="新游戏"

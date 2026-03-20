@@ -12,7 +12,8 @@ export const DeleteButton = memo(function DeleteButton({
   return (
     <button
       className={`
-        w-[60px] h-[60px] flex items-center justify-center
+        number-button touch-optimized btn-hover-lift
+        flex items-center justify-center
         rounded-xl transition-all duration-200
         ${isDisabled
           ? 'bg-slate-100 text-slate-300 cursor-not-allowed'
@@ -23,7 +24,7 @@ export const DeleteButton = memo(function DeleteButton({
       aria-label="删除"
       aria-disabled={isDisabled}
     >
-      <i className="ri-delete-back-line text-[24px]" />
+      <i className="ri-delete-back-line text-xl sm:text-2xl" />
     </button>
   )
 })

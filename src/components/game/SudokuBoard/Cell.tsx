@@ -56,17 +56,17 @@ function CellComponent({
     <button
       type="button"
       className={`
-        w-[60px] h-[60px]
+        cell cell-transition touch-optimized
         flex items-center justify-center
-        text-[28px] font-bold
         border border-slate-500
         ${getBackgroundClass()}
         ${getBorderClass()}
         ${getTextClass()}
-        transition-colors duration-150
         focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-inset
         hover:brightness-95
         active:brightness-90
+        ${isSelected ? 'animate-cell-select' : ''}
+        ${isConflict ? 'animate-shake' : ''}
       `}
       onClick={onClick}
       aria-label={`单元格 ${row + 1}行 ${col + 1}列${value ? `，值为 ${value}` : '，空'}`}
@@ -75,7 +75,9 @@ function CellComponent({
       data-value={value ?? ''}
       data-initial={isInitial}
     >
-      {value ?? ''}
+      <span className={`${value !== null ? 'number-enter' : ''}`}>
+        {value ?? ''}
+      </span>
     </button>
   )
 }

@@ -48,8 +48,7 @@ export function SudokuBoard({ board, selectedCell, onCellClick }: SudokuBoardPro
   return (
     <div className="flex justify-center">
       <div
-        className="grid grid-cols-9 border-2 border-slate-600 bg-white rounded-sm overflow-hidden"
-        style={{ width: '540px', height: '540px' }}
+        className="grid grid-cols-9 border-2 border-slate-600 bg-white rounded-sm overflow-hidden board-container"
       >
         {board.map((row, rowIndex) =>
           row.map((cell, colIndex) => {

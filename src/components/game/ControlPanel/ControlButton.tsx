@@ -26,9 +26,10 @@ export const ControlButton = memo(function ControlButton({
   return (
     <button
       className={`
+        control-button touch-optimized btn-hover-lift
         flex-1 flex items-center justify-center gap-2
-        h-[51px] rounded-xl
-        text-white font-semibold text-base
+        rounded-xl
+        text-white font-semibold
         transition-all duration-200
         ${disabled ? 'opacity-50 cursor-not-allowed' : `${colorClasses[color]} active:scale-[0.98]`}
       `}
@@ -36,8 +37,8 @@ export const ControlButton = memo(function ControlButton({
       disabled={disabled}
       aria-label={label}
     >
-      <i className={`${icon} text-lg`} />
-      <span>{label}</span>
+      <i className={`${icon} text-lg sm:text-xl`} />
+      <span className="hidden sm:inline text-sm lg:text-base">{label}</span>
     </button>
   )
 })

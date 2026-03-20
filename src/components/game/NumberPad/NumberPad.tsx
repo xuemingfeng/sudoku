@@ -34,7 +34,7 @@ export function NumberPad({
   }, [selectedCell, board, isGameComplete])
 
   return (
-    <div className="flex justify-center gap-2 overflow-x-auto pb-2">
+    <div className="flex justify-center gap-2 sm:gap-3 overflow-x-auto pb-2 px-2 -mx-2">
       {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
         <NumberButton
           key={number}
