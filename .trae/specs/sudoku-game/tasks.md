@@ -9,13 +9,13 @@
   - [x] SubTask 1.4: 设置 ESLint 和 Prettier
   - [x] SubTask 1.5: 配置路径别名（@/ 指向 src/）
 
-- [ ] Task 2: 配置测试框架
-  - [ ] SubTask 2.1: 安装 Vitest 和相关依赖（@vitest/ui, @testing-library/react, jsdom）
-  - [ ] SubTask 2.2: 创建 vitest.config.ts 配置文件
-  - [ ] SubTask 2.3: 创建测试设置文件 tests/setup.ts
-  - [ ] SubTask 2.4: 安装 Playwright 和相关依赖
-  - [ ] SubTask 2.5: 创建 playwright.config.ts 配置文件
-  - [ ] SubTask 2.6: 配置 package.json 测试脚本命令
+- [x] Task 2: 配置测试框架
+  - [x] SubTask 2.1: 安装 Vitest 和相关依赖（@vitest/ui, @testing-library/react, jsdom）
+  - [x] SubTask 2.2: 创建 vitest.config.ts 配置文件
+  - [x] SubTask 2.3: 创建测试设置文件 tests/setup.ts
+  - [x] SubTask 2.4: 安装 Playwright 和相关依赖
+  - [x] SubTask 2.5: 创建 playwright.config.ts 配置文件
+  - [x] SubTask 2.6: 配置 package.json 测试脚本命令
 
 - [ ] Task 3: 配置全局样式和主题
   - [ ] SubTask 3.1: 引入 SourceHanSans（思源黑体）字体
