@@ -1,6 +1,5 @@
-// 游戏组件 - 将在后续任务中实现
-// export * from './GameContainer'
-// export * from './SudokuBoard'
-// export * from './NumberPad'
-// export * from './ControlPanel'
-// export * from './Header'
+export { GameContainer } from './GameContainer'
+export { Header } from './Header'
+export { SudokuBoard } from './SudokuBoard'
+export { NumberPad } from './NumberPad'
+export { ControlPanel } from './ControlPanel'

@@ -24,13 +24,13 @@
   - [x] SubTask 3.4: 创建全局 CSS 样式文件（背景渐变、基础样式）
   - [x] SubTask 3.5: 定义设计系统变量（主色调、按钮颜色、状态颜色）
 
-- [ ] Task 4: 创建基础组件结构
-  - [ ] SubTask 4.1: 创建 App 根组件
-  - [ ] SubTask 4.2: 创建 GameContainer 游戏容器组件
-  - [ ] SubTask 4.3: 创建 Header 头部组件
-  - [ ] SubTask 4.4: 创建 SudokuBoard 数独棋盘组件
-  - [ ] SubTask 4.5: 创建 NumberPad 数字输入组件
-  - [ ] SubTask 4.6: 创建 ControlPanel 控制面板组件
+- [x] Task 4: 创建基础组件结构
+  - [x] SubTask 4.1: 创建 App 根组件
+  - [x] SubTask 4.2: 创建 GameContainer 游戏容器组件
+  - [x] SubTask 4.3: 创建 Header 头部组件
+  - [x] SubTask 4.4: 创建 SudokuBoard 数独棋盘组件
+  - [x] SubTask 4.5: 创建 NumberPad 数字输入组件
+  - [x] SubTask 4.6: 创建 ControlPanel 控制面板组件
 
 ## Phase 2: 数独核心功能
 
