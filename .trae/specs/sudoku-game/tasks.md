@@ -129,11 +129,11 @@
 
 ## Phase 8: 测试与优化
 
-- [ ] Task 18: 编写单元测试
-  - [ ] SubTask 18.1: 编写 hooks 单元测试（useGame.test.ts, useTimer.test.ts）
-  - [ ] SubTask 18.2: 编写 utils 单元测试（storage.test.ts, format.test.ts）
-  - [ ] SubTask 18.3: 编写组件单元测试（SudokuBoard, NumberPad, ControlPanel）
-  - [ ] SubTask 18.4: 生成测试覆盖率报告
+- [x] Task 18: 编写单元测试
+  - [x] SubTask 18.1: 编写 hooks 单元测试（useGame.test.ts, useTimer.test.ts）
+  - [x] SubTask 18.2: 编写 utils 单元测试（storage.test.ts, format.test.ts）
+  - [x] SubTask 18.3: 编写组件单元测试（SudokuBoard, NumberPad, ControlPanel）
+  - [x] SubTask 18.4: 生成测试覆盖率报告
 
 - [ ] Task 19: 编写 E2E 测试
   - [ ] SubTask 19.1: 编写引导流程测试（guide.spec.ts）

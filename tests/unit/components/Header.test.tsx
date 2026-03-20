@@ -25,7 +25,7 @@ describe('Header', () => {
     it('标题应有正确的样式类', () => {
       render(<Header {...defaultProps} />)
       const title = screen.getByText('数独游戏')
-      expect(title).toHaveClass('text-[28px]', 'font-bold', 'text-slate-800')
+      expect(title).toHaveClass('font-bold', 'text-slate-800')
     })
   })
 

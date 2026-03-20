@@ -1,142 +1,251 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { SudokuBoard, Cell } from '@/components/game/SudokuBoard'
+import { SudokuBoard } from '@/components/game/SudokuBoard/SudokuBoard'
 import type { CellState } from '@/types/game'
 
-const createMockBoard = (): CellState[][] => {
-  return Array(9).fill(null).map((_, row) =>
-    Array(9).fill(null).map((_, col) => ({
-      value: (row * 3 + Math.floor(col / 3) + col) % 9 + 1,
-      isInitial: row < 3 && col < 3,
+function createEmptyBoard(): CellState[][] {
+  return Array(9).fill(null).map(() =>
+    Array(9).fill(null).map(() => ({
+      value: null,
+      isInitial: false,
       isError: false,
     }))
   )
 }
 
+function createBoardWithValues(
+  values: Array<{ row: number; col: number; value: number; isInitial?: boolean }>
+): CellState[][] {
+  const board = createEmptyBoard()
+  values.forEach(({ row, col, value, isInitial = false }) => {
+    board[row][col] = {
+      value,
+      isInitial,
+      isError: false,
+    }
+  })
+  return board
+}
+
 describe('SudokuBoard', () => {
-  const mockOnCellClick = vi.fn()
-  
-  const renderComponent = (
-    board: CellState[][] = createMockBoard(),
-    selectedCell: { row: number; col: number } | null = null
-  ) => {
-    return render(
+  it('should render 9x9 grid', () => {
+    const board = createEmptyBoard()
+    const onCellClick = vi.fn()
+    
+    render(
+      <SudokuBoard
+        board={board}
+        selectedCell={null}
+        onCellClick={onCellClick}
+      />
+    )
+    
+    const cells = screen.getAllByRole('button')
+    expect(cells).toHaveLength(81)
+  })
+
+  it('should highlight selected cell', () => {
+    const board = createEmptyBoard()
+    const onCellClick = vi.fn()
+    const selectedCell = { row: 0, col: 0 }
+    
+    render(
       <SudokuBoard
         board={board}
         selectedCell={selectedCell}
-        onCellClick={mockOnCellClick}
+        onCellClick={onCellClick}
       />
     )
-  }
-
-  beforeEach(() => {
-    mockOnCellClick.mockClear()
-  })
-
-  it('should render 81 cells', () => {
-    renderComponent()
-    const cells = document.querySelectorAll('[data-row]')
-    expect(cells.length).toBe(81)
-  })
-
-  it('should call onCellClick when cell is clicked', () => {
-    renderComponent()
-    const firstCell = document.querySelector('[data-row="0"][data-col="0"]')
-    fireEvent.click(firstCell!)
-    expect(mockOnCellClick).toHaveBeenCalledWith(0, 0)
-  })
-
-  it('should render initial numbers with correct styling', () => {
-    renderComponent()
-    const initialCell = document.querySelector('[data-row="0"][data-col="0"]')
-    expect(initialCell?.getAttribute('data-initial')).toBe('true')
-  })
-
-  it('should highlight row when cell is selected', () => {
-    const board = createMockBoard()
-    renderComponent(board, { row: 4, col: 4 })
-    const cells = document.querySelectorAll('[data-row="4"]')
-    expect(cells.length).toBe(9)
-  })
-
-  it('should highlight column when cell is selected', () => {
-    const board = createMockBoard()
-    renderComponent(board, { row: 4, col: 4 })
-    const cells = document.querySelectorAll('[data-col="4"]')
-    expect(cells.length).toBe(9)
-  })
-
-  it('should highlight 3x3 box when cell is selected', () => {
-    const board = createMockBoard()
-    renderComponent(board, { row: 4, col: 4 })
     
-    const boxCells = [
-      [3,3], [3,4], [3,5],
-      [4,3], [4,4], [4,5],
-      [5,3], [5,4], [5,5]
-    ]
+    const cell = screen.getByRole('button', { name: /单元格 1行 1列/ })
+    expect(cell).toHaveClass('bg-blue-200')
+  })
+
+  it('should highlight same row, col, and box', () => {
+    const board = createEmptyBoard()
+    const onCellClick = vi.fn()
+    const selectedCell = { row: 4, col: 4 }
     
-    boxCells.forEach(([row, col]) => {
-      const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`)
-      expect(cell).not.toBeNull()
-    })
+    render(
+      <SudokuBoard
+        board={board}
+        selectedCell={selectedCell}
+        onCellClick={onCellClick}
+      />
+    )
+    
+    const sameRowCell = screen.getByRole('button', { name: /单元格 5行 1列/ })
+    const sameColCell = screen.getByRole('button', { name: /单元格 1行 5列/ })
+    const sameBoxCell = screen.getByRole('button', { name: /单元格 4行 4列/ })
+    const otherCell = screen.getByRole('button', { name: /单元格 1行 1列/ })
+    
+    expect(sameRowCell).toHaveClass('bg-slate-100')
+    expect(sameColCell).toHaveClass('bg-slate-100')
+    expect(sameBoxCell).toHaveClass('bg-slate-100')
+    expect(otherCell).not.toHaveClass('bg-slate-100')
   })
 
-  it('should show selected cell with distinct style', () => {
-    const board = createMockBoard()
-    renderComponent(board, { row: 4, col: 4 })
-    const selectedCell = document.querySelector('[data-row="4"][data-col="4"]')
-    expect(selectedCell).not.toBeNull()
-  })
-})
-
-describe('Cell', () => {
-  const defaultProps = {
-    row: 0,
-    col: 0,
-    value: 5 as const,
-    isInitial: false,
-    isError: false,
-    isSelected: false,
-    isHighlighted: false,
-    isSameNumber: false,
-    isConflict: false,
-    onClick: vi.fn(),
-  }
-
-  it('should render cell value', () => {
-    render(<Cell {...defaultProps} />)
-    expect(screen.getByText('5')).toBeDefined()
+  it('should highlight same numbers', () => {
+    const board = createBoardWithValues([
+      { row: 0, col: 0, value: 5 },
+      { row: 4, col: 4, value: 5 },
+      { row: 2, col: 2, value: 3 },
+    ])
+    const onCellClick = vi.fn()
+    const selectedCell = { row: 0, col: 0 }
+    
+    render(
+      <SudokuBoard
+        board={board}
+        selectedCell={selectedCell}
+        onCellClick={onCellClick}
+      />
+    )
+    
+    const cellWith5 = screen.getByRole('button', { name: /单元格 5行 5列，值为 5/ })
+    expect(cellWith5).toHaveClass('bg-blue-100')
+    
+    const cellWith3 = screen.getByRole('button', { name: /单元格 3行 3列，值为 3/ })
+    expect(cellWith3).not.toHaveClass('bg-blue-100')
   })
 
-  it('should render empty cell', () => {
-    render(<Cell {...defaultProps} value={null} />)
-    const cell = document.querySelector('button')
-    expect(cell?.textContent).toBe('')
+  it('should show conflicts', () => {
+    const board = createBoardWithValues([
+      { row: 0, col: 0, value: 5 },
+      { row: 0, col: 1, value: 5 },
+    ])
+    const onCellClick = vi.fn()
+    const selectedCell = { row: 0, col: 0 }
+    
+    render(
+      <SudokuBoard
+        board={board}
+        selectedCell={selectedCell}
+        onCellClick={onCellClick}
+      />
+    )
+    
+    const conflictCell = screen.getByRole('button', { name: /单元格 1行 2列，值为 5/ })
+    expect(conflictCell).toHaveClass('bg-red-100')
   })
 
-  it('should call onClick when clicked', () => {
-    const onClick = vi.fn()
-    render(<Cell {...defaultProps} onClick={onClick} />)
-    const cell = document.querySelector('button')!
+  it('should call onCellClick when cell clicked', () => {
+    const board = createEmptyBoard()
+    const onCellClick = vi.fn()
+    
+    render(
+      <SudokuBoard
+        board={board}
+        selectedCell={null}
+        onCellClick={onCellClick}
+      />
+    )
+    
+    const cell = screen.getByRole('button', { name: /单元格 5行 5列/ })
     fireEvent.click(cell)
-    expect(onClick).toHaveBeenCalled()
+    
+    expect(onCellClick).toHaveBeenCalledWith(4, 4)
   })
 
-  it('should have correct aria-label', () => {
-    render(<Cell {...defaultProps} />)
-    const cell = document.querySelector('button')
-    expect(cell?.getAttribute('aria-label')).toContain('单元格')
-    expect(cell?.getAttribute('aria-label')).toContain('1')
-    expect(cell?.getAttribute('aria-label')).toContain('值为 5')
+  it('should display cell values', () => {
+    const board = createBoardWithValues([
+      { row: 0, col: 0, value: 1 },
+      { row: 0, col: 1, value: 2 },
+      { row: 0, col: 2, value: 3 },
+    ])
+    const onCellClick = vi.fn()
+    
+    render(
+      <SudokuBoard
+        board={board}
+        selectedCell={null}
+        onCellClick={onCellClick}
+      />
+    )
+    
+    expect(screen.getByText('1')).toBeInTheDocument()
+    expect(screen.getByText('2')).toBeInTheDocument()
+    expect(screen.getByText('3')).toBeInTheDocument()
+  })
+
+  it('should show initial cell style', () => {
+    const board = createBoardWithValues([
+      { row: 0, col: 0, value: 5, isInitial: true },
+    ])
+    const onCellClick = vi.fn()
+    
+    render(
+      <SudokuBoard
+        board={board}
+        selectedCell={null}
+        onCellClick={onCellClick}
+      />
+    )
+    
+    const cell = screen.getByRole('button', { name: /单元格 1行 1列，值为 5/ })
+    expect(cell).toHaveClass('bg-blue-50')
+  })
+
+  it('should show error style', () => {
+    const board = createEmptyBoard()
+    board[0][0] = {
+      value: 5,
+      isInitial: false,
+      isError: true,
+    }
+    const onCellClick = vi.fn()
+    
+    render(
+      <SudokuBoard
+        board={board}
+        selectedCell={null}
+        onCellClick={onCellClick}
+      />
+    )
+    
+    const cell = screen.getByRole('button', { name: /单元格 1行 1列，值为 5/ })
+    expect(cell).toHaveClass('text-red-500')
+  })
+
+  it('should have correct aria-labels', () => {
+    const board = createBoardWithValues([
+      { row: 0, col: 0, value: 5 },
+    ])
+    const onCellClick = vi.fn()
+    
+    render(
+      <SudokuBoard
+        board={board}
+        selectedCell={null}
+        onCellClick={onCellClick}
+      />
+    )
+    
+    const filledCell = screen.getByRole('button', { name: /单元格 1行 1列，值为 5/ })
+    expect(filledCell).toHaveAttribute('aria-label', '单元格 1行 1列，值为 5')
+    
+    const emptyCell = screen.getByRole('button', { name: /单元格 1行 2列，空/ })
+    expect(emptyCell).toHaveAttribute('aria-label', '单元格 1行 2列，空')
   })
 
   it('should have correct data attributes', () => {
-    render(<Cell {...defaultProps} row={3} col={5} value={7} />)
-    const cell = document.querySelector('button')
-    expect(cell?.getAttribute('data-row')).toBe('3')
-    expect(cell?.getAttribute('data-col')).toBe('5')
-    expect(cell?.getAttribute('data-value')).toBe('7')
-    expect(cell?.getAttribute('data-initial')).toBe('false')
+    const board = createBoardWithValues([
+      { row: 0, col: 0, value: 5, isInitial: true },
+    ])
+    const onCellClick = vi.fn()
+    
+    render(
+      <SudokuBoard
+        board={board}
+        selectedCell={null}
+        onCellClick={onCellClick}
+      />
+    )
+    
+    const cell = screen.getByRole('button', { name: /单元格 1行 1列，值为 5/ })
+    expect(cell).toHaveAttribute('data-row', '0')
+    expect(cell).toHaveAttribute('data-col', '0')
+    expect(cell).toHaveAttribute('data-value', '5')
+    expect(cell).toHaveAttribute('data-initial', 'true')
   })
 })
