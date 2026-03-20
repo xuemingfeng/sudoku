@@ -76,32 +76,32 @@
 
 ## Phase 4: 页面组件开发
 
-- [ ] Task 11: 实现引导页组件（GuidePage）
-  - [ ] SubTask 11.1: 创建引导页容器组件
-  - [ ] SubTask 11.2: 实现引导步骤指示器
-  - [ ] SubTask 11.3: 实现引导步骤内容（规则、操作、高亮、按钮）
-  - [ ] SubTask 11.4: 实现上一步/下一步/开始游戏按钮
-  - [ ] SubTask 11.5: 实现跳过引导功能
-  - [ ] SubTask 11.6: 实现首次访问检测和状态持久化
+- [x] Task 11: 实现引导页组件（GuidePage）
+  - [x] SubTask 11.1: 创建引导页容器组件
+  - [x] SubTask 11.2: 实现引导步骤指示器
+  - [x] SubTask 11.3: 实现引导步骤内容（规则、操作、高亮、按钮）
+  - [x] SubTask 11.4: 实现上一步/下一步/开始游戏按钮
+  - [x] SubTask 11.5: 实现跳过引导功能
+  - [x] SubTask 11.6: 实现首次访问检测和状态持久化
 
-- [ ] Task 12: 实现成功界面组件（SuccessPage）
-  - [ ] SubTask 12.1: 创建成功界面容器组件
-  - [ ] SubTask 12.2: 实现祝贺信息和动画效果
-  - [ ] SubTask 12.3: 实现游戏统计展示（用时、错误、提示、难度）
-  - [ ] SubTask 12.4: 实现最佳记录显示
-  - [ ] SubTask 12.5: 实现再来一局和返回主页按钮
+- [x] Task 12: 实现成功界面组件（SuccessPage）
+  - [x] SubTask 12.1: 创建成功界面容器组件
+  - [x] SubTask 12.2: 实现祝贺信息和动画效果
+  - [x] SubTask 12.3: 实现游戏统计展示（用时、错误、提示、难度）
+  - [x] SubTask 12.4: 实现最佳记录显示
+  - [x] SubTask 12.5: 实现再来一局和返回主页按钮
 
-- [ ] Task 13: 实现失败界面组件（FailurePage）
-  - [ ] SubTask 13.1: 创建失败界面容器组件
-  - [ ] SubTask 13.2: 实现失败提示信息
-  - [ ] SubTask 13.3: 实现游戏统计展示
-  - [ ] SubTask 13.4: 实现重新开始和选择难度按钮
+- [x] Task 13: 实现失败界面组件（FailurePage）
+  - [x] SubTask 13.1: 创建失败界面容器组件
+  - [x] SubTask 13.2: 实现失败提示信息
+  - [x] SubTask 13.3: 实现游戏统计展示
+  - [x] SubTask 13.4: 实现重新开始和选择难度按钮
 
-- [ ] Task 14: 实现弹窗组件
-  - [ ] SubTask 14.1: 创建 Modal 基础弹窗组件
-  - [ ] SubTask 14.2: 实现难度选择弹窗（DifficultyModal）
-  - [ ] SubTask 14.3: 实现确认弹窗（ConfirmModal）
-  - [ ] SubTask 14.4: 实现弹窗动画效果
+- [x] Task 14: 实现弹窗组件
+  - [x] SubTask 14.1: 创建 Modal 基础弹窗组件
+  - [x] SubTask 14.2: 实现难度选择弹窗（DifficultyModal）
+  - [x] SubTask 14.3: 实现确认弹窗（ConfirmModal）
+  - [x] SubTask 14.4: 实现弹窗动画效果
 
 ## Phase 5: 路由与页面导航
 

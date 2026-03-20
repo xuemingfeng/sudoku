@@ -1,0 +1,5 @@
+export { SuccessPage } from './SuccessPage'
+export { SuccessHeader } from './SuccessHeader'
+export { GameStats } from './GameStats'
+export { BestRecord } from './BestRecord'
+export { SuccessButtons } from './SuccessButtons'
