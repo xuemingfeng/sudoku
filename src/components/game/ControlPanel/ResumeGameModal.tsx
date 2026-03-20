@@ -47,6 +47,7 @@ export const ResumeGameModal = memo(function ResumeGameModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="resume-modal-title"
+      data-testid="resume-modal"
     >
       <div
         className="bg-white rounded-2xl shadow-xl w-[400px] max-w-[90vw] p-6 animate-scale-in"

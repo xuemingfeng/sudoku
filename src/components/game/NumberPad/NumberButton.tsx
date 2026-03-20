@@ -33,6 +33,7 @@ export const NumberButton = memo(function NumberButton({
       disabled={isDisabled}
       aria-label={`数字 ${number}，剩余 ${remainingCount} 个`}
       aria-disabled={isDisabled}
+      data-testid={`number-button-${number}`}
     >
       <span className="font-bold leading-none" style={{ fontSize: 'var(--font-size-number)' }}>
         {number}

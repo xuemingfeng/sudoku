@@ -74,6 +74,7 @@ function CellComponent({
       data-col={col}
       data-value={value ?? ''}
       data-initial={isInitial}
+      data-testid="sudoku-cell"
     >
       <span className={`${value !== null ? 'number-enter' : ''}`}>
         {value ?? ''}

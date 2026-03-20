@@ -135,11 +135,11 @@
   - [x] SubTask 18.3: 编写组件单元测试（SudokuBoard, NumberPad, ControlPanel）
   - [x] SubTask 18.4: 生成测试覆盖率报告
 
-- [ ] Task 19: 编写 E2E 测试
-  - [ ] SubTask 19.1: 编写引导流程测试（guide.spec.ts）
-  - [ ] SubTask 19.2: 编写游戏主流程测试（game.spec.ts）
-  - [ ] SubTask 19.3: 编写游戏控制测试（controls.spec.ts）
-  - [ ] SubTask 19.4: 编写响应式布局测试
+- [x] Task 19: 编写 E2E 测试
+  - [x] SubTask 19.1: 编写引导流程测试（guide.spec.ts）
+  - [x] SubTask 19.2: 编写游戏主流程测试（game.spec.ts）
+  - [x] SubTask 19.3: 编写游戏控制测试（controls.spec.ts）
+  - [x] SubTask 19.4: 编写响应式布局测试
 
 - [ ] Task 20: 优化与验收
   - [ ] SubTask 20.1: 进行跨浏览器兼容性测试

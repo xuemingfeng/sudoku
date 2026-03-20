@@ -23,6 +23,7 @@ export const DeleteButton = memo(function DeleteButton({
       disabled={isDisabled}
       aria-label="删除"
       aria-disabled={isDisabled}
+      data-testid="delete-button"
     >
       <i className="ri-delete-back-line text-xl sm:text-2xl" />
     </button>

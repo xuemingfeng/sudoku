@@ -35,15 +35,15 @@ export const Header = memo(function Header({
         <span className="ml-2 sm:ml-3 text-xl sm:text-2xl lg:text-[28px] font-bold text-slate-800">{title}</span>
       </div>
       <div className="flex items-center gap-3 sm:gap-4 lg:gap-6">
-        <div className="flex items-center">
+        <div className="flex items-center" data-testid="timer">
           <i className="ri-time-line text-lg sm:text-xl text-slate-500" />
           <span className="ml-1 sm:ml-2 text-base sm:text-lg lg:text-xl font-semibold text-slate-700">{formatTime(timer)}</span>
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center" data-testid="error-counter">
           <i className="ri-close-circle-line text-lg sm:text-xl text-red-500" />
           <span className="ml-1 sm:ml-2 text-base sm:text-lg lg:text-xl font-semibold text-red-500">{errors}/{maxErrors}</span>
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center" data-testid="difficulty-indicator">
           <i className="ri-bar-chart-line text-lg sm:text-xl text-purple-600" />
           <span className="ml-1 sm:ml-2 text-base sm:text-lg lg:text-xl font-semibold text-purple-600">{difficultyLabels[difficulty]}</span>
         </div>

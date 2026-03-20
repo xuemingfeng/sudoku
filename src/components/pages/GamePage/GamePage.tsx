@@ -208,7 +208,7 @@ export const GamePage = memo(function GamePage({
   const sudokuBoard = convertToSudokuCell(state.board)
 
   return (
-    <div className="min-h-screen bg-gradient-main flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-main flex items-center justify-center p-4" data-testid="game-page">
       <GameContainer>
         <div className="flex flex-col gap-6">
           <Header

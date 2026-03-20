@@ -22,6 +22,8 @@ export const StepIndicator = memo(function StepIndicator({
               : 'bg-slate-300'
           }`}
           aria-label={index === currentStep ? `当前步骤 ${index + 1}` : `步骤 ${index + 1}`}
+          data-testid="step-indicator"
+          data-active={index === currentStep}
         />
       ))}
     </div>
