@@ -1,4 +1,4 @@
-export type Difficulty = 'easy' | 'medium' | 'hard'
+export type { Difficulty } from './sudoku'
 
 export type CellState = {
   value: number | null
@@ -8,7 +8,7 @@ export type CellState = {
 
 export type GameState = {
   board: CellState[][]
-  difficulty: Difficulty
+  difficulty: import('./sudoku').Difficulty
   timer: number
   errors: number
   maxErrors: number
@@ -17,9 +17,11 @@ export type GameState = {
 }
 
 export type GameAction =
+  | { type: 'NEW_GAME'; payload: { board: CellState[][]; difficulty: import('./sudoku').Difficulty } }
+  | { type: 'LOAD_GAME'; payload: GameState }
   | { type: 'SET_BOARD'; payload: CellState[][] }
   | { type: 'SET_CELL'; payload: { row: number; col: number; value: number | null } }
-  | { type: 'SET_DIFFICULTY'; payload: Difficulty }
+  | { type: 'SET_DIFFICULTY'; payload: import('./sudoku').Difficulty }
   | { type: 'INCREMENT_TIMER' }
   | { type: 'INCREMENT_ERRORS' }
   | { type: 'COMPLETE_GAME' }

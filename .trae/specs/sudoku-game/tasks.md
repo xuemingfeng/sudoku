@@ -34,17 +34,17 @@
 
 ## Phase 2: 数独核心功能
 
-- [ ] Task 5: 实现数独生成算法
-  - [ ] SubTask 5.1: 实现数独生成器（回溯法）
-  - [ ] SubTask 5.2: 实现难度控制逻辑
-  - [ ] SubTask 5.3: 实现数独验证算法
-  - [ ] SubTask 5.4: 编写算法单元测试（sudokuGenerator.test.ts, sudokuValidator.test.ts）
+- [x] Task 5: 实现数独生成算法
+  - [x] SubTask 5.1: 实现数独生成器（回溯法）
+  - [x] SubTask 5.2: 实现难度控制逻辑
+  - [x] SubTask 5.3: 实现数独验证算法
+  - [x] SubTask 5.4: 编写算法单元测试（sudokuGenerator.test.ts, sudokuValidator.test.ts）
 
-- [ ] Task 6: 实现游戏状态管理
-  - [ ] SubTask 6.1: 创建 GameContext 上下文
-  - [ ] SubTask 6.2: 实现游戏状态 Reducer
-  - [ ] SubTask 6.3: 实现游戏状态持久化（localStorage）
-  - [ ] SubTask 6.4: 实现计时器功能
+- [x] Task 6: 实现游戏状态管理
+  - [x] SubTask 6.1: 创建 GameContext 上下文
+  - [x] SubTask 6.2: 实现游戏状态 Reducer
+  - [x] SubTask 6.3: 实现游戏状态持久化（localStorage）
+  - [x] SubTask 6.4: 实现计时器功能
 
 ## Phase 3: UI 组件开发
 

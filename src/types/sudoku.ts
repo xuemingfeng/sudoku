@@ -1,3 +1,5 @@
+export type Difficulty = 'easy' | 'medium' | 'hard'
+
 export type SudokuCell = {
   row: number
   col: number
