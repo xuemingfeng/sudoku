@@ -1,1 +1,73 @@
 @import "tailwindcss";
+@import './styles/fonts.css';
+@import 'remixicon/fonts/remixicon.css';
+@import './styles/variables.css';
+
+@theme {
+  --font-family-sans: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
+
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+
+  --color-accent-purple: #9333ea;
+
+  --color-gradient-start: #667eea;
+  --color-gradient-end: #764ba2;
+
+  --radius-card: 32px;
+  --radius-button: 12px;
+  --radius-icon: 16px;
+
+  --shadow-card: 0 25px 50px rgba(0, 0, 0, 0.25);
+}
+
+html {
+  font-family: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bg-gradient-main {
+  background: linear-gradient(135deg, var(--gradient-bg-start), var(--gradient-bg-end));
+}
+
+.bg-gradient-header {
+  background: linear-gradient(90deg, var(--gradient-header-start), var(--gradient-header-end));
+}
+
+.card-container {
+  background: white;
+  border-radius: 32px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: white;
+  border-radius: 12px;
+  padding: 12px 32px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}

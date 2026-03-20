@@ -17,12 +17,12 @@
   - [x] SubTask 2.5: 创建 playwright.config.ts 配置文件
   - [x] SubTask 2.6: 配置 package.json 测试脚本命令
 
-- [ ] Task 3: 配置全局样式和主题
-  - [ ] SubTask 3.1: 引入 SourceHanSans（思源黑体）字体
-  - [ ] SubTask 3.2: 引入 RemixIcon 图标字体库
-  - [ ] SubTask 3.3: 配置 Tailwind CSS 自定义主题（颜色、渐变、阴影、圆角）
-  - [ ] SubTask 3.4: 创建全局 CSS 样式文件（背景渐变、基础样式）
-  - [ ] SubTask 3.5: 定义设计系统变量（主色调、按钮颜色、状态颜色）
+- [x] Task 3: 配置全局样式和主题
+  - [x] SubTask 3.1: 引入 SourceHanSans（思源黑体）字体
+  - [x] SubTask 3.2: 引入 RemixIcon 图标字体库
+  - [x] SubTask 3.3: 配置 Tailwind CSS 自定义主题（颜色、渐变、阴影、圆角）
+  - [x] SubTask 3.4: 创建全局 CSS 样式文件（背景渐变、基础样式）
+  - [x] SubTask 3.5: 定义设计系统变量（主色调、按钮颜色、状态颜色）
 
 - [ ] Task 4: 创建基础组件结构
   - [ ] SubTask 4.1: 创建 App 根组件
