@@ -1,6 +1,7 @@
 export const GRID_SIZE = 9
 export const BOX_SIZE = 3
 export const MAX_ERRORS = 3
+export const AUTO_SAVE_DELAY = 500
 
 export const DIFFICULTY_CONFIG = {
   easy: { minHoles: 30, maxHoles: 35, label: '简单' },

@@ -5,6 +5,7 @@ export type GameRecord = {
   difficulty: Difficulty
   time: number
   errors: number
+  hints: number
   date: string
   isComplete: boolean
 }
@@ -58,6 +59,16 @@ export function saveGameState(state: GameState): boolean {
 
 export function loadGameState(): GameState | null {
   return safeGetItem<GameState | null>(STORAGE_KEYS.GAME_STATE, null)
+}
+
+export function hasSavedGame(): boolean {
+  const state = loadGameState()
+  if (!state) return false
+  if (state.isComplete) return false
+  const hasEmptyCells = state.board.some(row => 
+    row.some(cell => cell.value === null)
+  )
+  return hasEmptyCells
 }
 
 export function clearGameState(): boolean {

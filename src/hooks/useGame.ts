@@ -10,7 +10,7 @@ export function useGame() {
   const { state, dispatch } = useGameContext()
 
   const startNewGame = useCallback((difficulty: Difficulty) => {
-    const { puzzle } = generateSudokuPuzzle(difficulty)
+    const { puzzle, solution } = generateSudokuPuzzle(difficulty)
     
     const initialPositions = new Set<string>()
     for (let row = 0; row < 9; row++) {
@@ -29,7 +29,7 @@ export function useGame() {
       }))
     )
 
-    dispatch({ type: 'NEW_GAME', payload: { board, difficulty } })
+    dispatch({ type: 'NEW_GAME', payload: { board, difficulty, solution } })
     clearGameState()
   }, [dispatch])
 
@@ -53,10 +53,11 @@ export function useGame() {
     dispatch({ type: 'SET_CELL', payload: { row, col, value } })
 
     if (value !== null) {
-      const grid = state.board.map(r => r.map(c => c.value))
-      grid[row][col] = value
-      
-      const conflicts = getConflicts(grid, row, col)
+      const conflicts = getConflicts(
+        state.board.map(r => r.map(c => c.value)),
+        row,
+        col
+      )
       if (conflicts.length > 0) {
         dispatch({ type: 'INCREMENT_ERRORS' })
       }
@@ -81,6 +82,7 @@ export function useGame() {
         difficulty: state.difficulty,
         time: state.timer,
         errors: state.errors,
+        hints: state.hints,
         date: new Date().toISOString(),
         isComplete: true,
       })
@@ -136,6 +138,43 @@ export function useGame() {
     return emptyCells[randomIndex]
   }, [state.board])
 
+  const applyHint = useCallback((row: number, col: number) => {
+    if (state.isComplete || state.isPaused) return
+    if (state.board[row][col].isInitial) return
+    if (state.board[row][col].value !== null) return
+
+    const correctValue = state.solution[row][col]
+    if (correctValue === null) return
+
+    dispatch({ type: 'SET_CELL', payload: { row, col, value: correctValue } })
+    dispatch({ type: 'INCREMENT_HINTS' })
+
+    const newBoard = state.board.map((r, ri) =>
+      r.map((c, ci) => {
+        if (ri === row && ci === col) {
+          return { ...c, value: correctValue, isError: false }
+        }
+        return c
+      })
+    )
+
+    const gridForCheck = newBoard.map(r => r.map(c => c.value))
+    if (isSudokuComplete(gridForCheck)) {
+      dispatch({ type: 'COMPLETE_GAME' })
+      clearGameState()
+      
+      saveBestRecord(state.difficulty, state.timer)
+      saveGameHistory({
+        difficulty: state.difficulty,
+        time: state.timer,
+        errors: state.errors,
+        hints: state.hints + 1,
+        date: new Date().toISOString(),
+        isComplete: true,
+      })
+    }
+  }, [dispatch, state])
+
   const isGameLost = useMemo(() => {
     return state.errors >= state.maxErrors
   }, [state.errors, state.maxErrors])
@@ -154,6 +193,7 @@ export function useGame() {
     getRemainingCounts,
     getValidNumbers,
     getHint,
+    applyHint,
     isGameLost,
     emptyCellsCount,
   }

@@ -36,6 +36,8 @@ export const initialGameState: GameState = {
   maxErrors: MAX_ERRORS,
   isComplete: false,
   isPaused: false,
+  hints: 0,
+  solution: Array(9).fill(null).map(() => Array(9).fill(null)),
 }
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
@@ -45,6 +47,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         ...initialGameState,
         board: action.payload.board,
         difficulty: action.payload.difficulty,
+        solution: action.payload.solution,
       }
     }
 
@@ -102,6 +105,13 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       }
     }
 
+    case 'INCREMENT_HINTS': {
+      return {
+        ...state,
+        hints: state.hints + 1,
+      }
+    }
+
     case 'COMPLETE_GAME': {
       return {
         ...state,
@@ -135,6 +145,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         ),
         timer: 0,
         errors: 0,
+        hints: 0,
         isComplete: false,
         isPaused: false,
       }

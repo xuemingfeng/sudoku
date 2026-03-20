@@ -1,7 +1,8 @@
-import { createContext, useContext, useReducer, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useReducer, useEffect, useRef, useCallback, type ReactNode } from 'react'
 import type { GameState, GameAction } from '@/types/game'
 import { gameReducer, initialGameState } from './gameReducer'
 import { saveGameState, loadGameState } from '@/utils/storage'
+import { AUTO_SAVE_DELAY } from '@/constants/game'
 
 type GameContextType = {
   state: GameState
@@ -20,11 +21,29 @@ export function GameProvider({ children }: GameProviderProps) {
     return savedState || initial
   })
 
-  useEffect(() => {
-    if (!state.isComplete && state.timer > 0) {
-      saveGameState(state)
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const debouncedSave = useCallback((gameState: GameState) => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current)
     }
-  }, [state])
+    saveTimeoutRef.current = setTimeout(() => {
+      if (!gameState.isComplete) {
+        saveGameState(gameState)
+      }
+    }, AUTO_SAVE_DELAY)
+  }, [])
+
+  useEffect(() => {
+    if (!state.isComplete) {
+      debouncedSave(state)
+    }
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+    }
+  }, [state, debouncedSave])
 
   return (
     <GameContext.Provider value={{ state, dispatch }}>

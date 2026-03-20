@@ -1,22 +1,9 @@
-import { memo, useState, useCallback } from 'react'
+import { memo, useCallback, useEffect, useState, useRef } from 'react'
 import { GameContainer, Header, SudokuBoard, NumberPad, ControlPanel } from '@/components/game'
-import type { SudokuCell, Position, Difficulty, SudokuGrid } from '@/types/sudoku'
-import { generateSudokuPuzzle } from '@/algorithms/sudokuGenerator'
-import { useTimer } from '@/hooks/useTimer'
-
-function createInitialBoard(puzzle: SudokuGrid): SudokuCell[][] {
-  return puzzle.map((row, rowIndex) =>
-    row.map((value, colIndex) => ({
-      row: rowIndex,
-      col: colIndex,
-      value,
-      isInitial: value !== null,
-      isError: false,
-    }))
-  )
-}
-
-const MAX_ERRORS = 3
+import type { SudokuCell, Position, Difficulty } from '@/types/sudoku'
+import { useGame } from '@/hooks/useGame'
+import { isSudokuComplete, getConflicts } from '@/algorithms/sudokuValidator'
+import { clearGameState, saveBestRecord, saveGameHistory } from '@/utils/storage'
 
 export type GameResult = {
   time: number
@@ -31,185 +18,194 @@ type GamePageProps = {
   initialDifficulty?: Difficulty
 }
 
+function convertToSudokuCell(board: { value: number | null; isInitial: boolean; isError: boolean }[][]): SudokuCell[][] {
+  return board.map((row, rowIndex) =>
+    row.map((cell, colIndex) => ({
+      row: rowIndex,
+      col: colIndex,
+      value: cell.value,
+      isInitial: cell.isInitial,
+      isError: cell.isError,
+    }))
+  )
+}
+
 export const GamePage = memo(function GamePage({
   onGameComplete,
   onGameFail,
   initialDifficulty = 'medium',
 }: GamePageProps) {
-  const [difficulty, setDifficulty] = useState<Difficulty>(initialDifficulty)
-  const [gameData, setGameData] = useState(() => {
-    const { puzzle, solution } = generateSudokuPuzzle(initialDifficulty)
-    return {
-      board: createInitialBoard(puzzle),
-      solution,
-    }
-  })
+  const { state, startNewGame, resetGame, setCell, applyHint } = useGame()
   const [selectedCell, setSelectedCell] = useState<Position | null>(null)
-  const [isGameComplete, setIsGameComplete] = useState(false)
-  const [isGameFailed, setIsGameFailed] = useState(false)
   const [timer, setTimer] = useState(0)
-  const [errors, setErrors] = useState(0)
-  const [hints, setHints] = useState(0)
+  const initializedRef = useRef(false)
 
-  useTimer(!isGameComplete && !isGameFailed, useCallback(() => {
-    setTimer(prev => prev + 1)
-  }, []))
+  useEffect(() => {
+    if (state.isComplete || state.isPaused) return
+    
+    const interval = setInterval(() => {
+      setTimer(prev => prev + 1)
+    }, 1000)
+    
+    return () => clearInterval(interval)
+  }, [state.isComplete, state.isPaused])
 
-  const checkGameComplete = useCallback((board: SudokuCell[][]) => {
-    return board.every(row =>
-      row.every(cell => cell.value !== null && !cell.isError)
+  useEffect(() => {
+    if (initializedRef.current) return
+    
+    const isEmptyBoard = state.board.every(row => 
+      row.every(cell => cell.value === null)
     )
-  }, [])
+    const isEmptySolution = state.solution.every(row => 
+      row.every(cell => cell === null)
+    )
+    if (isEmptyBoard && isEmptySolution) {
+      initializedRef.current = true
+      startNewGame(initialDifficulty)
+    }
+  }, [state.board, state.solution, initialDifficulty, startNewGame])
+
+  useEffect(() => {
+    if (state.isComplete && state.errors >= state.maxErrors) {
+      onGameFail({
+        time: timer,
+        errors: state.errors,
+        hints: state.hints,
+        difficulty: state.difficulty,
+      })
+    }
+  }, [state.isComplete, state.errors, state.maxErrors, timer, state.hints, state.difficulty, onGameFail])
 
   const handleCellClick = useCallback((row: number, col: number) => {
-    if (!gameData.board[row][col].isInitial) {
+    if (!state.board[row][col].isInitial && !state.isComplete) {
       setSelectedCell({ row, col })
     }
-  }, [gameData.board])
+  }, [state.board, state.isComplete])
 
   const handleNumberClick = useCallback((number: number) => {
-    if (!selectedCell || isGameComplete || isGameFailed) return
+    if (!selectedCell || state.isComplete) return
     const { row, col } = selectedCell
-    if (gameData.board[row][col].isInitial) return
+    if (state.board[row][col].isInitial) return
 
-    const isError = gameData.solution[row][col] !== number
-    let newErrors = errors
+    const grid = state.board.map(r => r.map(c => c.value))
+    grid[row][col] = number
+    const conflicts = getConflicts(grid, row, col)
+    const isError = conflicts.length > 0
+
+    setCell(row, col, number)
 
     if (isError) {
-      newErrors = errors + 1
-      setErrors(newErrors)
-
-      if (newErrors >= MAX_ERRORS) {
-        setIsGameFailed(true)
-        onGameFail({
-          time: timer,
-          errors: newErrors,
-          hints,
-          difficulty,
-        })
+      const newErrors = state.errors + 1
+      if (newErrors >= state.maxErrors) {
+        setTimeout(() => {
+          onGameFail({
+            time: timer,
+            errors: newErrors,
+            hints: state.hints,
+            difficulty: state.difficulty,
+          })
+        }, 100)
         return
       }
     }
 
-    const newBoard = gameData.board.map((r, ri) =>
-      r.map((cell, ci) => {
+    const newBoard = state.board.map((r, ri) =>
+      r.map((c, ci) => {
         if (ri === row && ci === col) {
-          return { ...cell, value: number, isError }
+          return { ...c, value: number, isError }
         }
-        return cell
+        return c
       })
     )
-
-    setGameData(prev => ({
-      ...prev,
-      board: newBoard,
-    }))
-
-    if (!isError && checkGameComplete(newBoard)) {
-      setIsGameComplete(true)
-      onGameComplete({
+    const gridForCheck = newBoard.map(r => r.map(c => c.value))
+    if (!isError && isSudokuComplete(gridForCheck)) {
+      clearGameState()
+      saveBestRecord(state.difficulty, timer)
+      saveGameHistory({
+        difficulty: state.difficulty,
         time: timer,
-        errors: newErrors,
-        hints,
-        difficulty,
+        errors: state.errors,
+        hints: state.hints,
+        date: new Date().toISOString(),
+        isComplete: true,
       })
+      setTimeout(() => {
+        onGameComplete({
+          time: timer,
+          errors: state.errors,
+          hints: state.hints,
+          difficulty: state.difficulty,
+        })
+      }, 100)
     }
-  }, [selectedCell, gameData.board, gameData.solution, isGameComplete, isGameFailed, errors, timer, hints, difficulty, onGameComplete, onGameFail, checkGameComplete])
+  }, [selectedCell, state, setCell, timer, onGameComplete, onGameFail])
 
   const handleDeleteClick = useCallback(() => {
-    if (!selectedCell || isGameComplete || isGameFailed) return
+    if (!selectedCell || state.isComplete) return
     const { row, col } = selectedCell
-    if (gameData.board[row][col].isInitial) return
+    if (state.board[row][col].isInitial) return
 
-    setGameData(prev => ({
-      ...prev,
-      board: prev.board.map((r, ri) =>
-        r.map((cell, ci) => {
-          if (ri === row && ci === col) {
-            return { ...cell, value: null, isError: false }
-          }
-          return cell
-        })
-      ),
-    }))
-  }, [selectedCell, gameData.board, isGameComplete, isGameFailed])
+    setCell(row, col, null)
+  }, [selectedCell, state, setCell])
 
   const handleNewGame = useCallback((newDifficulty: Difficulty) => {
-    const { puzzle, solution } = generateSudokuPuzzle(newDifficulty)
-    setGameData({
-      board: createInitialBoard(puzzle),
-      solution,
-    })
-    setDifficulty(newDifficulty)
+    startNewGame(newDifficulty)
     setSelectedCell(null)
-    setIsGameComplete(false)
-    setIsGameFailed(false)
     setTimer(0)
-    setErrors(0)
-    setHints(0)
-  }, [])
+  }, [startNewGame])
 
   const handleReset = useCallback(() => {
-    setGameData(prev => ({
-      ...prev,
-      board: prev.board.map(row =>
-        row.map(cell => ({
-          ...cell,
-          value: cell.isInitial ? cell.value : null,
-          isError: false,
-        }))
-      ),
-    }))
+    resetGame()
     setSelectedCell(null)
-    setIsGameComplete(false)
-    setIsGameFailed(false)
     setTimer(0)
-    setErrors(0)
-    setHints(0)
-  }, [])
+  }, [resetGame])
 
   const handleHint = useCallback((row: number, col: number, value: number) => {
-    if (isGameComplete || isGameFailed) return
-
-    setHints(prev => prev + 1)
-    const newBoard = gameData.board.map((r, ri) =>
-      r.map((cell, ci) => {
+    if (state.isComplete) return
+    
+    applyHint(row, col)
+    setSelectedCell({ row, col })
+    
+    const newBoard = state.board.map((r, ri) =>
+      r.map((c, ci) => {
         if (ri === row && ci === col) {
-          return { ...cell, value, isError: false }
+          return { ...c, value, isError: false }
         }
-        return cell
+        return c
       })
     )
-
-    setGameData(prev => ({
-      ...prev,
-      board: newBoard,
-    }))
-
-    if (checkGameComplete(newBoard)) {
-      setIsGameComplete(true)
-      onGameComplete({
+    const gridForCheck = newBoard.map(r => r.map(c => c.value))
+    if (isSudokuComplete(gridForCheck)) {
+      clearGameState()
+      saveBestRecord(state.difficulty, timer)
+      saveGameHistory({
+        difficulty: state.difficulty,
         time: timer,
-        errors,
-        hints: hints + 1,
-        difficulty,
+        errors: state.errors,
+        hints: state.hints + 1,
+        date: new Date().toISOString(),
+        isComplete: true,
       })
+      setTimeout(() => {
+        onGameComplete({
+          time: timer,
+          errors: state.errors,
+          hints: state.hints + 1,
+          difficulty: state.difficulty,
+        })
+      }, 100)
     }
-  }, [gameData.board, isGameComplete, isGameFailed, timer, errors, hints, difficulty, onGameComplete, checkGameComplete])
+  }, [state, applyHint, timer, onGameComplete])
 
-  const handleCheck = useCallback((errorPositions: Position[]) => {
-    const errorSet = new Set(errorPositions.map(e => `${e.row}-${e.col}`))
-
-    setGameData(prev => ({
-      ...prev,
-      board: prev.board.map((row, ri) =>
-        row.map((cell, ci) => ({
-          ...cell,
-          isError: errorSet.has(`${ri}-${ci}`),
-        }))
-      ),
-    }))
+  const handleCheck = useCallback((_errorPositions: Position[]) => {
+    // Error marking is handled by the validator
   }, [])
+
+  const handleEndGame = useCallback(() => {
+    clearGameState()
+  }, [])
+
+  const sudokuBoard = convertToSudokuCell(state.board)
 
   return (
     <div className="min-h-screen bg-gradient-main flex items-center justify-center p-4">
@@ -217,32 +213,32 @@ export const GamePage = memo(function GamePage({
         <div className="flex flex-col gap-6">
           <Header
             timer={timer}
-            errors={errors}
-            maxErrors={MAX_ERRORS}
-            difficulty={difficulty}
+            errors={state.errors}
+            maxErrors={state.maxErrors}
+            difficulty={state.difficulty}
           />
           <ControlPanel
             selectedCell={selectedCell}
-            board={gameData.board}
-            solution={gameData.solution}
-            isGameComplete={isGameComplete || isGameFailed}
+            board={sudokuBoard}
+            solution={state.solution}
+            isGameComplete={state.isComplete}
             onNewGame={handleNewGame}
             onReset={handleReset}
             onHint={handleHint}
             onCheck={handleCheck}
-            onEndGame={() => {}}
+            onEndGame={handleEndGame}
           />
           <SudokuBoard
-            board={gameData.board}
+            board={sudokuBoard}
             selectedCell={selectedCell}
             onCellClick={handleCellClick}
           />
           <NumberPad
             selectedCell={selectedCell}
-            board={gameData.board}
+            board={sudokuBoard}
             onNumberClick={handleNumberClick}
             onDeleteClick={handleDeleteClick}
-            isGameComplete={isGameComplete || isGameFailed}
+            isGameComplete={state.isComplete}
           />
         </div>
       </GameContainer>
