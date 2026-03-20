@@ -1,16 +1,28 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback, useSyncExternalStore } from 'react'
 
 const GUIDE_COMPLETED_KEY = 'sudoku_guide_completed'
 
-export function useFirstVisit() {
-  const [isFirstVisit, setIsFirstVisit] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+function getGuideCompletedSnapshot(): boolean {
+  return localStorage.getItem(GUIDE_COMPLETED_KEY) === 'true'
+}
 
-  useEffect(() => {
-    const completed = localStorage.getItem(GUIDE_COMPLETED_KEY)
-    setIsFirstVisit(!completed)
-    setIsLoading(false)
-  }, [])
+function getGuideCompletedServerSnapshot(): boolean {
+  return false
+}
+
+function subscribeToStorage(callback: () => void): () => void {
+  window.addEventListener('storage', callback)
+  return () => window.removeEventListener('storage', callback)
+}
+
+export function useFirstVisit() {
+  const isGuideCompleted = useSyncExternalStore(
+    subscribeToStorage,
+    getGuideCompletedSnapshot,
+    getGuideCompletedServerSnapshot
+  )
+  
+  const [isFirstVisit, setIsFirstVisit] = useState(!isGuideCompleted)
 
   const markGuideCompleted = useCallback(() => {
     localStorage.setItem(GUIDE_COMPLETED_KEY, 'true')
@@ -24,7 +36,7 @@ export function useFirstVisit() {
 
   return {
     isFirstVisit,
-    isLoading,
+    isLoading: false,
     markGuideCompleted,
     resetGuideStatus,
   }

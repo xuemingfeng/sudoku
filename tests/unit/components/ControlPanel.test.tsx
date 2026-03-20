@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { ControlPanel, ControlButton, DifficultyModal, ConfirmModal } from '@/components/game/ControlPanel'
-import type { Difficulty, Position } from '@/types/sudoku'
+import type { Position } from '@/types/sudoku'
 
 function createEmptyBoard() {
   return Array(9)

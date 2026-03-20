@@ -8,7 +8,6 @@ import {
   getBestRecords,
   saveGameHistory,
   getGameHistory,
-  clearGameHistory,
   isGuideShown,
   setGuideShown,
   clearAllData,
