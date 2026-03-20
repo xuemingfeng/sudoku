@@ -1,3 +1,5 @@
 export * from './useGame'
 export * from './useTimer'
 export * from './useLocalStorage'
+export * from './useRemainingCounts'
+export * from './useDisabledNumbers'

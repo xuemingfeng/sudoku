@@ -48,11 +48,6 @@ function App() {
     }
   }
 
-  const remainingCounts: Record<number, number> = {}
-  for (let i = 1; i <= 9; i++) {
-    remainingCounts[i] = 9 - board.flat().filter(c => c.value === i).length
-  }
-
   return (
     <div className="min-h-screen bg-gradient-main flex items-center justify-center p-4">
       <GameContainer>
@@ -75,9 +70,10 @@ function App() {
             onCellClick={handleCellClick} 
           />
           <NumberPad
+            selectedCell={selectedCell}
+            board={board}
             onNumberClick={handleNumberClick}
             onDeleteClick={handleDeleteClick}
-            remainingCounts={remainingCounts}
           />
         </div>
       </GameContainer>

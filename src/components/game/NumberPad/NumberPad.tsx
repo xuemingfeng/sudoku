@@ -1,42 +1,53 @@
+import { useMemo } from 'react'
+import type { SudokuCell } from '@/types/sudoku'
+import type { Position } from '@/types/sudoku'
+import { NumberButton } from './NumberButton'
+import { DeleteButton } from './DeleteButton'
+import { useRemainingCounts } from '@/hooks/useRemainingCounts'
+import { useDisabledNumbers } from '@/hooks/useDisabledNumbers'
+
 type NumberPadProps = {
+  selectedCell: Position | null
+  board: SudokuCell[][]
   onNumberClick: (number: number) => void
   onDeleteClick: () => void
-  remainingCounts: Record<number, number>
-  disabledNumbers?: number[]
+  isGameComplete?: boolean
 }
 
-export function NumberPad({ 
-  onNumberClick, 
-  onDeleteClick, 
-  remainingCounts,
-  disabledNumbers = []
+export function NumberPad({
+  selectedCell,
+  board,
+  onNumberClick,
+  onDeleteClick,
+  isGameComplete = false,
 }: NumberPadProps) {
+  const remainingCounts = useRemainingCounts(board)
+  const disabledNumbers = useDisabledNumbers(selectedCell, board, remainingCounts)
+
+  const isDeleteDisabled = useMemo(() => {
+    if (isGameComplete) return true
+    if (!selectedCell) return true
+    const cell = board[selectedCell.row][selectedCell.col]
+    if (cell.isInitial) return true
+    if (cell.value === null) return true
+    return false
+  }, [selectedCell, board, isGameComplete])
+
   return (
-    <div className="flex justify-center gap-2">
+    <div className="flex justify-center gap-2 overflow-x-auto pb-2">
       {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
-        <button
+        <NumberButton
           key={number}
-          className={`
-            w-12 h-12 flex flex-col items-center justify-center
-            rounded-xl text-xl font-semibold
-            transition-all duration-200
-            ${disabledNumbers.includes(number) 
-              ? 'bg-slate-100 text-slate-300 cursor-not-allowed' 
-              : 'bg-blue-50 text-blue-600 hover:bg-blue-100 active:scale-95'}
-          `}
-          onClick={() => onNumberClick(number)}
-          disabled={disabledNumbers.includes(number)}
-        >
-          <span>{number}</span>
-          <span className="text-xs text-slate-400">{remainingCounts[number] || 0}</span>
-        </button>
+          number={number}
+          remainingCount={remainingCounts[number]}
+          isDisabled={isGameComplete || disabledNumbers.has(number)}
+          onClick={onNumberClick}
+        />
       ))}
-      <button
-        className="w-12 h-12 flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 active:scale-95 transition-all"
+      <DeleteButton
+        isDisabled={isDeleteDisabled}
         onClick={onDeleteClick}
-      >
-        <i className="ri-delete-back-line text-xl" />
-      </button>
+      />
     </div>
   )
 }
