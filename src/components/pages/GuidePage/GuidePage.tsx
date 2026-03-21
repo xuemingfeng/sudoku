@@ -35,7 +35,7 @@ export const GuidePage = memo(function GuidePage({
   }, [onSkip])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-main p-4" data-testid="guide-page">
+    <div className="inset-0 z-50 flex items-center justify-center bg-gradient-main p-4" data-testid="guide-page">
       <div className="bg-white rounded-[32px] shadow-xl w-[800px] max-w-[95vw] max-h-[90vh] overflow-hidden animate-scale-in">
         <div className="p-8">
           <div className="text-center mb-6">

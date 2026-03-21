@@ -8,9 +8,15 @@ type SudokuBoardProps = {
   board: CellState[][]
   selectedCell: Position | null
   onCellClick: (row: number, col: number) => void
+  isGameStarted?: boolean
 }
 
-export function SudokuBoard({ board, selectedCell, onCellClick }: SudokuBoardProps) {
+export function SudokuBoard({
+  board,
+  selectedCell,
+  onCellClick,
+  isGameStarted = true,
+}: SudokuBoardProps) {
   const conflicts = useMemo(() => {
     if (!selectedCell) return []
     const grid = board.map(row => row.map(cell => cell.value))
@@ -70,7 +76,7 @@ export function SudokuBoard({ board, selectedCell, onCellClick }: SudokuBoardPro
                 isHighlighted={highlighted}
                 isSameNumber={sameNumber}
                 isConflict={hasConflict}
-                onClick={() => onCellClick(rowIndex, colIndex)}
+                onClick={() => isGameStarted && onCellClick(rowIndex, colIndex)}
               />
             )
           })

@@ -1,5 +1,6 @@
 import { memo, useCallback, useEffect, useState, useRef } from 'react'
 import { GameContainer, Header, SudokuBoard, NumberPad, ControlPanel } from '@/components/game'
+import { DifficultyModal } from '@/components/game/ControlPanel'
 import type { SudokuCell, Position, Difficulty } from '@/types/sudoku'
 import { useGame } from '@/hooks/useGame'
 import { isSudokuComplete, getConflicts } from '@/algorithms/sudokuValidator'
@@ -15,7 +16,6 @@ export type GameResult = {
 type GamePageProps = {
   onGameComplete: (result: GameResult) => void
   onGameFail: (result: GameResult) => void
-  initialDifficulty?: Difficulty
 }
 
 function convertToSudokuCell(board: { value: number | null; isInitial: boolean; isError: boolean }[][]): SudokuCell[][] {
@@ -33,22 +33,23 @@ function convertToSudokuCell(board: { value: number | null; isInitial: boolean; 
 export const GamePage = memo(function GamePage({
   onGameComplete,
   onGameFail,
-  initialDifficulty = 'medium',
 }: GamePageProps) {
-  const { state, startNewGame, resetGame, setCell, applyHint } = useGame()
+  const { state, startNewGame, resetGame, setCell, applyHint, endGame } = useGame()
   const [selectedCell, setSelectedCell] = useState<Position | null>(null)
   const [timer, setTimer] = useState(0)
+  const [showDifficultyModal, setShowDifficultyModal] = useState(false)
+  const [hasGameStarted, setHasGameStarted] = useState(false)
   const initializedRef = useRef(false)
 
   useEffect(() => {
-    if (state.isComplete || state.isPaused) return
+    if (state.isComplete || state.isPaused || !hasGameStarted) return
     
     const interval = setInterval(() => {
       setTimer(prev => prev + 1)
     }, 1000)
     
     return () => clearInterval(interval)
-  }, [state.isComplete, state.isPaused])
+  }, [state.isComplete, state.isPaused, hasGameStarted])
 
   useEffect(() => {
     if (initializedRef.current) return
@@ -61,9 +62,9 @@ export const GamePage = memo(function GamePage({
     )
     if (isEmptyBoard && isEmptySolution) {
       initializedRef.current = true
-      startNewGame(initialDifficulty)
+      queueMicrotask(() => setShowDifficultyModal(true))
     }
-  }, [state.board, state.solution, initialDifficulty, startNewGame])
+  }, [state.board, state.solution])
 
   useEffect(() => {
     if (state.isComplete && state.errors >= state.maxErrors) {
@@ -77,10 +78,10 @@ export const GamePage = memo(function GamePage({
   }, [state.isComplete, state.errors, state.maxErrors, timer, state.hints, state.difficulty, onGameFail])
 
   const handleCellClick = useCallback((row: number, col: number) => {
-    if (!state.board[row][col].isInitial && !state.isComplete) {
+    if (!state.isComplete) {
       setSelectedCell({ row, col })
     }
-  }, [state.board, state.isComplete])
+  }, [state.isComplete])
 
   const handleNumberClick = useCallback((number: number) => {
     if (!selectedCell || state.isComplete) return
@@ -152,6 +153,14 @@ export const GamePage = memo(function GamePage({
     startNewGame(newDifficulty)
     setSelectedCell(null)
     setTimer(0)
+    setHasGameStarted(true)
+    setShowDifficultyModal(false)
+  }, [startNewGame])
+
+  const handleSelectInitialDifficulty = useCallback((difficulty: Difficulty) => {
+    startNewGame(difficulty)
+    setHasGameStarted(true)
+    setShowDifficultyModal(false)
   }, [startNewGame])
 
   const handleReset = useCallback(() => {
@@ -202,8 +211,12 @@ export const GamePage = memo(function GamePage({
   }, [])
 
   const handleEndGame = useCallback(() => {
-    clearGameState()
-  }, [])
+    endGame()
+    setSelectedCell(null)
+    setTimer(0)
+    setHasGameStarted(false)
+    setShowDifficultyModal(true)
+  }, [endGame])
 
   const sudokuBoard = convertToSudokuCell(state.board)
 
@@ -222,6 +235,7 @@ export const GamePage = memo(function GamePage({
             board={sudokuBoard}
             solution={state.solution}
             isGameComplete={state.isComplete}
+            isGameStarted={hasGameStarted}
             onNewGame={handleNewGame}
             onReset={handleReset}
             onHint={handleHint}
@@ -232,6 +246,7 @@ export const GamePage = memo(function GamePage({
             board={sudokuBoard}
             selectedCell={selectedCell}
             onCellClick={handleCellClick}
+            isGameStarted={hasGameStarted}
           />
           <NumberPad
             selectedCell={selectedCell}
@@ -239,9 +254,16 @@ export const GamePage = memo(function GamePage({
             onNumberClick={handleNumberClick}
             onDeleteClick={handleDeleteClick}
             isGameComplete={state.isComplete}
+            isGameStarted={hasGameStarted}
           />
         </div>
       </GameContainer>
+
+      <DifficultyModal
+        isOpen={showDifficultyModal}
+        onClose={() => setShowDifficultyModal(false)}
+        onSelect={handleSelectInitialDifficulty}
+      />
     </div>
   )
 })

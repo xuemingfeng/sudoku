@@ -28,9 +28,8 @@ function CellComponent({
   const getBackgroundClass = () => {
     if (isConflict) return 'bg-red-100'
     if (isSelected) return 'bg-blue-200'
-    if (isSameNumber) return 'bg-blue-100'
+    if (isSameNumber) return 'bg-amber-100'
     if (isHighlighted) return 'bg-slate-100'
-    if (isInitial) return 'bg-blue-50'
     return 'bg-white'
   }
 
@@ -49,7 +48,13 @@ function CellComponent({
 
   const getTextClass = () => {
     if (isError || isConflict) return 'text-red-500'
+    if (!isInitial && value !== null) return 'text-blue-600'
     return 'text-slate-800'
+  }
+
+  const getFontClass = () => {
+    if (isSameNumber) return 'font-bold'
+    return 'font-normal'
   }
 
   return (
@@ -62,6 +67,7 @@ function CellComponent({
         ${getBackgroundClass()}
         ${getBorderClass()}
         ${getTextClass()}
+        ${getFontClass()}
         focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-inset
         hover:brightness-95
         active:brightness-90

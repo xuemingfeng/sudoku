@@ -151,6 +151,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       }
     }
 
+    case 'END_GAME': {
+      return initialGameState
+    }
+
     default:
       return state
   }

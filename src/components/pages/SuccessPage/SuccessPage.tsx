@@ -26,7 +26,7 @@ export const SuccessPage = memo(function SuccessPage({
   onReturnHome,
 }: SuccessPageProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-main p-4">
+    <div className="inset-0 z-50 flex items-center justify-center bg-gradient-main p-4">
       <div className="bg-white rounded-[32px] shadow-xl w-[500px] max-w-[95vw] animate-scale-in">
         <div className="p-8">
           <SuccessHeader />

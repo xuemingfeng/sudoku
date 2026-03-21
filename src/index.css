@@ -40,6 +40,7 @@ body {
   padding: 0;
   min-height: 100vh;
   min-height: 100dvh;
+  background: linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   touch-action: manipulation;
@@ -52,11 +53,11 @@ body {
 }
 
 .bg-gradient-main {
-  background: linear-gradient(135deg, var(--gradient-bg-start), var(--gradient-bg-end));
+  background: linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end));
 }
 
 .bg-gradient-header {
-  background: linear-gradient(90deg, var(--gradient-header-start), var(--gradient-header-end));
+  background: linear-gradient(90deg, var(--color-primary-500), var(--color-accent-purple));
 }
 
 .card-container {

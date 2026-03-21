@@ -37,6 +37,11 @@ export function useGame() {
     dispatch({ type: 'RESET_GAME' })
   }, [dispatch])
 
+  const endGame = useCallback(() => {
+    dispatch({ type: 'END_GAME' })
+    clearGameState()
+  }, [dispatch])
+
   const pauseGame = useCallback(() => {
     dispatch({ type: 'PAUSE_GAME' })
     saveGameState(state)
@@ -187,6 +192,7 @@ export function useGame() {
     state,
     startNewGame,
     resetGame,
+    endGame,
     pauseGame,
     resumeGame,
     setCell,

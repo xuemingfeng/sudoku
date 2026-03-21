@@ -9,6 +9,7 @@ type ControlPanelProps = {
   board: { value: number | null; isInitial: boolean }[][]
   solution: SudokuGrid
   isGameComplete: boolean
+  isGameStarted: boolean
   onNewGame: (difficulty: Difficulty) => void
   onReset: () => void
   onHint: (row: number, col: number, value: number) => void
@@ -21,6 +22,7 @@ export function ControlPanel({
   board,
   solution,
   isGameComplete,
+  isGameStarted,
   onNewGame,
   onReset,
   onHint,
@@ -85,13 +87,14 @@ export function ControlPanel({
   }, [onEndGame])
 
   const isHintDisabled = useMemo(() => {
+    if (!isGameStarted) return true
     if (isGameComplete) return true
     if (!selectedCell) return true
     const cell = board[selectedCell.row][selectedCell.col]
     if (cell.isInitial) return true
     if (cell.value !== null) return true
     return false
-  }, [selectedCell, board, isGameComplete])
+  }, [selectedCell, board, isGameComplete, isGameStarted])
 
   return (
     <>
@@ -107,7 +110,7 @@ export function ControlPanel({
           label="重置"
           color="slate"
           onClick={handleReset}
-          disabled={isGameComplete}
+          disabled={!isGameStarted || isGameComplete}
         />
         <ControlButton
           icon="ri-lightbulb-line"
@@ -121,14 +124,14 @@ export function ControlPanel({
           label="检查"
           color="green"
           onClick={handleCheck}
-          disabled={isGameComplete}
+          disabled={!isGameStarted || isGameComplete}
         />
         <ControlButton
           icon="ri-close-line"
           label="结束游戏"
           color="red"
           onClick={handleEndGame}
-          disabled={isGameComplete}
+          disabled={!isGameStarted || isGameComplete}
         />
       </div>
 

@@ -1,10 +1,10 @@
 import { memo, useState, useCallback, useEffect } from 'react'
 import { useNavigation } from '@/context/NavigationContext'
+import { GameProvider } from '@/context/GameContext'
 import { useFirstVisit } from '@/hooks/useFirstVisit'
 import { GuidePage, SuccessPage, FailurePage, GamePage } from '@/components/pages'
 import { ResumeGameModal } from '@/components/game/ControlPanel'
 import type { GameResult } from '@/components/pages/GamePage'
-import type { Difficulty } from '@/types'
 import type { GameState } from '@/types/game'
 import { getBestRecord, saveBestRecord, hasSavedGame, loadGameState, clearGameState } from '@/utils/storage'
 
@@ -14,7 +14,6 @@ export const AppRouter = memo(function AppRouter() {
   const [gameResult, setGameResult] = useState<GameResult>(null)
   const [bestRecord, setBestRecordState] = useState<number | null>(null)
   const [isNewRecord, setIsNewRecord] = useState(false)
-  const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>('medium')
   const [showResumeModal, setShowResumeModal] = useState(false)
   const [savedGameState, setSavedGameState] = useState<GameState | null>(null)
 
@@ -64,7 +63,6 @@ export const AppRouter = memo(function AppRouter() {
   const handleGameComplete = useCallback((result: GameResult) => {
     if (!result) return
     setGameResult(result)
-    setCurrentDifficulty(result.difficulty)
 
     const currentBest = getBestRecord(result.difficulty)
     if (currentBest === null || result.time < currentBest) {
@@ -141,12 +139,11 @@ export const AppRouter = memo(function AppRouter() {
 
     case 'game':
       return (
-        <>
-          <div key="game" className={pageClassName}>
+        <GameProvider key="game">
+          <div className={pageClassName}>
             <GamePage
               onGameComplete={handleGameComplete}
               onGameFail={handleGameFail}
-              initialDifficulty={currentDifficulty}
             />
           </div>
           <ResumeGameModal
@@ -155,7 +152,7 @@ export const AppRouter = memo(function AppRouter() {
             onResume={handleResumeGame}
             onNewGame={handleStartNewGame}
           />
-        </>
+        </GameProvider>
       )
 
     case 'success':

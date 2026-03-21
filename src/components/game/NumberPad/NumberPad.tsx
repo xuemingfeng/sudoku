@@ -12,6 +12,7 @@ type NumberPadProps = {
   onNumberClick: (number: number) => void
   onDeleteClick: () => void
   isGameComplete?: boolean
+  isGameStarted?: boolean
 }
 
 export function NumberPad({
@@ -20,18 +21,20 @@ export function NumberPad({
   onNumberClick,
   onDeleteClick,
   isGameComplete = false,
+  isGameStarted = true,
 }: NumberPadProps) {
   const remainingCounts = useRemainingCounts(board)
   const disabledNumbers = useDisabledNumbers(selectedCell, board, remainingCounts)
 
   const isDeleteDisabled = useMemo(() => {
+    if (!isGameStarted) return true
     if (isGameComplete) return true
     if (!selectedCell) return true
     const cell = board[selectedCell.row][selectedCell.col]
     if (cell.isInitial) return true
     if (cell.value === null) return true
     return false
-  }, [selectedCell, board, isGameComplete])
+  }, [selectedCell, board, isGameComplete, isGameStarted])
 
   return (
     <div className="flex justify-center gap-2 sm:gap-3 overflow-x-auto pb-2 px-2 -mx-2">
@@ -40,7 +43,7 @@ export function NumberPad({
           key={number}
           number={number}
           remainingCount={remainingCounts[number]}
-          isDisabled={isGameComplete || disabledNumbers.has(number)}
+          isDisabled={!isGameStarted || isGameComplete || disabledNumbers.has(number)}
           onClick={onNumberClick}
         />
       ))}

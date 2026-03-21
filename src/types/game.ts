@@ -31,3 +31,4 @@ export type GameAction =
   | { type: 'PAUSE_GAME' }
   | { type: 'RESUME_GAME' }
   | { type: 'RESET_GAME' }
+  | { type: 'END_GAME' }
