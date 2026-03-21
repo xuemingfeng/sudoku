@@ -141,11 +141,11 @@
   - [x] SubTask 19.3: 编写游戏控制测试（controls.spec.ts）
   - [x] SubTask 19.4: 编写响应式布局测试
 
-- [ ] Task 20: 优化与验收
-  - [ ] SubTask 20.1: 进行跨浏览器兼容性测试
-  - [ ] SubTask 20.2: 进行移动设备测试
-  - [ ] SubTask 20.3: 性能优化（加载时间、响应速度）
-  - [ ] SubTask 20.4: 最终验收测试
+- [x] Task 20: 优化与验收
+  - [x] SubTask 20.1: 进行跨浏览器兼容性测试
+  - [x] SubTask 20.2: 进行移动设备测试
+  - [x] SubTask 20.3: 性能优化（加载时间、响应速度）
+  - [x] SubTask 20.4: 最终验收测试
 
 # Task Dependencies
 

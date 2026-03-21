@@ -49,8 +49,6 @@ test.describe('Game Controls', () => {
     test('should reset timer on new game', async ({ page }) => {
       await page.waitForTimeout(2000)
       
-      const timerBefore = await page.locator('[data-testid="timer"]').textContent()
-      
       const newGameButton = page.getByRole('button', { name: '新游戏' })
       await newGameButton.click()
       

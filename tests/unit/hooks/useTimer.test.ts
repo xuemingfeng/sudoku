@@ -40,7 +40,7 @@ describe('useTimer', () => {
 
     it('should not increment when stopped', () => {
       const onTick = vi.fn()
-      const { result } = renderHook(() => useTimer(false, onTick))
+      renderHook(() => useTimer(false, onTick))
       
       act(() => {
         vi.advanceTimersByTime(5000)
@@ -156,7 +156,7 @@ describe('useTimer', () => {
   describe('isRunning parameter', () => {
     it('should start when isRunning changes to true', () => {
       const onTick = vi.fn()
-      const { result, rerender } = renderHook(
+      const { rerender } = renderHook(
         ({ isRunning }: { isRunning: boolean }) => useTimer(isRunning, onTick),
         { initialProps: { isRunning: false } }
       )

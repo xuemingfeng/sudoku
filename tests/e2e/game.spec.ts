@@ -153,7 +153,7 @@ test.describe('Game Flow', () => {
       const wrongNumber = page.locator('[data-testid="number-button-1"]')
       await wrongNumber.click()
       
-      const errorCounter = page.locator('[data-testid="error-counter"]')
+      await expect(page.locator('[data-testid="error-counter"]')).toBeVisible()
     })
   })
 
