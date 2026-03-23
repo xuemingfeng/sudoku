@@ -69,7 +69,7 @@ describe('useDisabledNumbers', () => {
     }
   })
 
-  it('should not disable all numbers when non-initial cell selected', () => {
+  it('should not disable any numbers when non-initial empty cell selected', () => {
     const board = createEmptyBoard()
     const selectedCell: Position = { row: 0, col: 0 }
     const remainingCounts = createRemainingCounts()
@@ -78,7 +78,7 @@ describe('useDisabledNumbers', () => {
       useDisabledNumbers(selectedCell, board, remainingCounts)
     )
     
-    expect(result.current.size).toBeLessThan(9)
+    expect(result.current.size).toBe(0)
   })
 
   it('should return empty set when no cell selected and all counts > 0', () => {
@@ -165,6 +165,6 @@ describe('useDisabledNumbers', () => {
       useDisabledNumbers(selectedCell, board, remainingCounts)
     )
     
-    expect(result.current.size).toBeGreaterThan(0)
+    expect(result.current.size).toBe(0)
   })
 })
