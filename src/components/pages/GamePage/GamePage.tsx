@@ -112,18 +112,7 @@ export const GamePage = memo(function GamePage({
     setCell(row, col, number)
 
     if (isError) {
-      const newErrors = state.errors + 1
-      if (newErrors >= state.maxErrors) {
-        setTimeout(() => {
-          onGameFail({
-            time: timer,
-            errors: newErrors,
-            hints: state.hints,
-            difficulty: state.difficulty,
-          })
-        }, 100)
-        return
-      }
+      dispatch({ type: 'INCREMENT_ERRORS' })
     }
 
     const newBoard = state.board.map((r, ri) =>
@@ -155,7 +144,7 @@ export const GamePage = memo(function GamePage({
         })
       }, 100)
     }
-  }, [selectedCell, state, setCell, timer, onGameComplete, onGameFail])
+  }, [selectedCell, state, setCell, timer, onGameComplete, dispatch])
 
   const handleDeleteClick = useCallback(() => {
     if (!selectedCell || state.isComplete) return
