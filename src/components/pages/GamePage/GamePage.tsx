@@ -1,10 +1,11 @@
 import { memo, useCallback, useEffect, useState, useRef } from 'react'
 import { GameContainer, Header, SudokuBoard, NumberPad, ControlPanel } from '@/components/game'
-import { DifficultyModal } from '@/components/game/ControlPanel'
+import { DifficultyModal, ResumeGameModal } from '@/components/game/ControlPanel'
 import type { SudokuCell, Position, Difficulty } from '@/types/sudoku'
+import type { GameState } from '@/types/game'
 import { useGame } from '@/hooks/useGame'
 import { isSudokuComplete, getConflicts } from '@/algorithms/sudokuValidator'
-import { clearGameState, saveBestRecord, saveGameHistory } from '@/utils/storage'
+import { clearGameState, saveBestRecord, saveGameHistory, hasSavedGame, loadGameState } from '@/utils/storage'
 
 export type GameResult = {
   time: number
@@ -34,11 +35,13 @@ export const GamePage = memo(function GamePage({
   onGameComplete,
   onGameFail,
 }: GamePageProps) {
-  const { state, startNewGame, resetGame, setCell, applyHint, endGame } = useGame()
+  const { state, startNewGame, resetGame, setCell, applyHint, endGame, dispatch } = useGame()
   const [selectedCell, setSelectedCell] = useState<Position | null>(null)
   const [timer, setTimer] = useState(0)
   const [showDifficultyModal, setShowDifficultyModal] = useState(false)
   const [hasGameStarted, setHasGameStarted] = useState(false)
+  const [showResumeModal, setShowResumeModal] = useState(false)
+  const [savedGameState, setSavedGameState] = useState<GameState | null>(null)
   const initializedRef = useRef(false)
 
   useEffect(() => {
@@ -50,6 +53,19 @@ export const GamePage = memo(function GamePage({
     
     return () => clearInterval(interval)
   }, [state.isComplete, state.isPaused, hasGameStarted])
+
+  useEffect(() => {
+    if (hasSavedGame()) {
+      const saved = loadGameState()
+      if (saved) {
+        queueMicrotask(() => {
+          setSavedGameState(saved)
+          setShowResumeModal(true)
+          initializedRef.current = true
+        })
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (initializedRef.current) return
@@ -218,6 +234,21 @@ export const GamePage = memo(function GamePage({
     setShowDifficultyModal(true)
   }, [endGame])
 
+  const handleResumeGame = useCallback(() => {
+    setShowResumeModal(false)
+    setHasGameStarted(true)
+    setTimer(state.timer)
+  }, [state.timer])
+
+  const handleStartNewGame = useCallback(() => {
+    clearGameState()
+    setShowResumeModal(false)
+    setSavedGameState(null)
+    dispatch({ type: 'END_GAME' })
+    initializedRef.current = false
+    setShowDifficultyModal(true)
+  }, [dispatch])
+
   const sudokuBoard = convertToSudokuCell(state.board)
 
   return (
@@ -263,6 +294,13 @@ export const GamePage = memo(function GamePage({
         isOpen={showDifficultyModal}
         onClose={() => setShowDifficultyModal(false)}
         onSelect={handleSelectInitialDifficulty}
+      />
+
+      <ResumeGameModal
+        isOpen={showResumeModal}
+        savedState={savedGameState}
+        onResume={handleResumeGame}
+        onNewGame={handleStartNewGame}
       />
     </div>
   )

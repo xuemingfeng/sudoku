@@ -190,6 +190,7 @@ export function useGame() {
 
   return {
     state,
+    dispatch,
     startNewGame,
     resetGame,
     endGame,

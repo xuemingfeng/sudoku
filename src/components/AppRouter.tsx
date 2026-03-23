@@ -3,10 +3,8 @@ import { useNavigation } from '@/context/NavigationContext'
 import { GameProvider } from '@/context/GameContext'
 import { useFirstVisit } from '@/hooks/useFirstVisit'
 import { GuidePage, SuccessPage, FailurePage, GamePage } from '@/components/pages'
-import { ResumeGameModal } from '@/components/game/ControlPanel'
 import type { GameResult } from '@/components/pages/GamePage'
-import type { GameState } from '@/types/game'
-import { getBestRecord, saveBestRecord, hasSavedGame, loadGameState, clearGameState } from '@/utils/storage'
+import { getBestRecord, saveBestRecord } from '@/utils/storage'
 
 export const AppRouter = memo(function AppRouter() {
   const { state, navigateTo, setTransitioning } = useNavigation()
@@ -14,8 +12,6 @@ export const AppRouter = memo(function AppRouter() {
   const [gameResult, setGameResult] = useState<GameResult>(null)
   const [bestRecord, setBestRecordState] = useState<number | null>(null)
   const [isNewRecord, setIsNewRecord] = useState(false)
-  const [showResumeModal, setShowResumeModal] = useState(false)
-  const [savedGameState, setSavedGameState] = useState<GameState | null>(null)
 
   useEffect(() => {
     if (!isLoading) {
@@ -26,20 +22,6 @@ export const AppRouter = memo(function AppRouter() {
       }
     }
   }, [isLoading, isFirstVisit, navigateTo])
-
-  useEffect(() => {
-    if (state.currentRoute === 'game' && !isLoading && !isFirstVisit) {
-      if (hasSavedGame()) {
-        const saved = loadGameState()
-        if (saved) {
-          queueMicrotask(() => {
-            setSavedGameState(saved)
-            setShowResumeModal(true)
-          })
-        }
-      }
-    }
-  }, [state.currentRoute, isLoading, isFirstVisit])
 
   useEffect(() => {
     if (state.isTransitioning) {
@@ -104,16 +86,6 @@ export const AppRouter = memo(function AppRouter() {
     navigateTo('game')
   }, [navigateTo])
 
-  const handleResumeGame = useCallback(() => {
-    setShowResumeModal(false)
-  }, [])
-
-  const handleStartNewGame = useCallback(() => {
-    clearGameState()
-    setShowResumeModal(false)
-    setSavedGameState(null)
-  }, [])
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-main flex items-center justify-center">
@@ -146,12 +118,6 @@ export const AppRouter = memo(function AppRouter() {
               onGameFail={handleGameFail}
             />
           </div>
-          <ResumeGameModal
-            isOpen={showResumeModal}
-            savedState={savedGameState}
-            onResume={handleResumeGame}
-            onNewGame={handleStartNewGame}
-          />
         </GameProvider>
       )
 
