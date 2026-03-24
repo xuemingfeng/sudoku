@@ -5,7 +5,7 @@ import type { SudokuCell, Position, Difficulty } from '@/types/sudoku'
 import type { GameState } from '@/types/game'
 import { useGame } from '@/hooks/useGame'
 import { isSudokuComplete, getConflicts } from '@/algorithms/sudokuValidator'
-import { clearGameState, saveBestRecord, saveGameHistory, hasSavedGame, loadGameState } from '@/utils/storage'
+import { clearGameState, hasSavedGame, loadGameState } from '@/utils/storage'
 
 export type GameResult = {
   time: number
@@ -157,15 +157,6 @@ export const GamePage = memo(function GamePage({
     const gridForCheck = newBoard.map(r => r.map(c => c.value))
     if (!isError && isSudokuComplete(gridForCheck)) {
       clearGameState()
-      saveBestRecord(state.difficulty, timer)
-      saveGameHistory({
-        difficulty: state.difficulty,
-        time: timer,
-        errors: state.errors,
-        hints: state.hints,
-        date: new Date().toISOString(),
-        isComplete: true,
-      })
       setTimeout(() => {
         onGameComplete({
           time: timer,
@@ -222,15 +213,6 @@ export const GamePage = memo(function GamePage({
     const gridForCheck = newBoard.map(r => r.map(c => c.value))
     if (isSudokuComplete(gridForCheck)) {
       clearGameState()
-      saveBestRecord(state.difficulty, timer)
-      saveGameHistory({
-        difficulty: state.difficulty,
-        time: timer,
-        errors: state.errors,
-        hints: state.hints + 1,
-        date: new Date().toISOString(),
-        isComplete: true,
-      })
       setTimeout(() => {
         onGameComplete({
           time: timer,

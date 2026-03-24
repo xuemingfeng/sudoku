@@ -3,7 +3,7 @@ import { useGameContext } from '@/context/GameContext'
 import { generateSudokuPuzzle } from '@/algorithms/sudokuGenerator'
 import { isSudokuComplete, isValidPlacement, getConflicts } from '@/algorithms/sudokuValidator'
 import { countEmptyCells } from '@/algorithms/difficultyController'
-import { saveGameState, clearGameState, saveBestRecord, saveGameHistory } from '@/utils/storage'
+import { clearGameState, saveGameState } from '@/utils/storage'
 import type { Difficulty, Position } from '@/types/sudoku'
 
 export function useGame() {
@@ -79,16 +79,6 @@ export function useGame() {
     if (isSudokuComplete(gridForCheck)) {
       dispatch({ type: 'COMPLETE_GAME' })
       clearGameState()
-      
-      saveBestRecord(state.difficulty, state.timer)
-      saveGameHistory({
-        difficulty: state.difficulty,
-        time: state.timer,
-        errors: state.errors,
-        hints: state.hints,
-        date: new Date().toISOString(),
-        isComplete: true,
-      })
     }
   }, [dispatch, state])
 
@@ -165,16 +155,6 @@ export function useGame() {
     if (isSudokuComplete(gridForCheck)) {
       dispatch({ type: 'COMPLETE_GAME' })
       clearGameState()
-      
-      saveBestRecord(state.difficulty, state.timer)
-      saveGameHistory({
-        difficulty: state.difficulty,
-        time: state.timer,
-        errors: state.errors,
-        hints: state.hints + 1,
-        date: new Date().toISOString(),
-        isComplete: true,
-      })
     }
   }, [dispatch, state])
 
