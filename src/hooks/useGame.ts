@@ -58,11 +58,9 @@ export function useGame() {
     dispatch({ type: 'SET_CELL', payload: { row, col, value } })
 
     if (value !== null) {
-      const conflicts = getConflicts(
-        state.board.map(r => r.map(c => c.value)),
-        row,
-        col
-      )
+      const grid = state.board.map(r => r.map(c => c.value))
+      grid[row][col] = value
+      const conflicts = getConflicts(grid, row, col)
       if (conflicts.length > 0) {
         dispatch({ type: 'INCREMENT_ERRORS' })
       }

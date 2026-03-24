@@ -15,13 +15,13 @@ export const FailureButtons = memo(function FailureButtons({
         onClick={onRestart}
         className="flex-1 h-12 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors"
       >
-        重新开始
+        重玩本局
       </button>
       <button
         onClick={onSelectDifficulty}
         className="flex-1 h-12 rounded-xl bg-slate-600 text-white font-semibold hover:bg-slate-700 transition-colors"
       >
-        选择难度
+        开始游戏
       </button>
     </div>
   )

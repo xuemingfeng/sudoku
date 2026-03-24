@@ -14,9 +14,13 @@ export type GameResult = {
   difficulty: Difficulty
 } | null
 
+export type PendingAction = 'restart' | 'newGame' | null
+
 type GamePageProps = {
   onGameComplete: (result: GameResult) => void
   onGameFail: (result: GameResult) => void
+  pendingAction?: PendingAction
+  onActionHandled?: () => void
 }
 
 function convertToSudokuCell(board: { value: number | null; isInitial: boolean; isError: boolean }[][]): SudokuCell[][] {
@@ -34,6 +38,8 @@ function convertToSudokuCell(board: { value: number | null; isInitial: boolean; 
 export const GamePage = memo(function GamePage({
   onGameComplete,
   onGameFail,
+  pendingAction,
+  onActionHandled,
 }: GamePageProps) {
   const { state, startNewGame, resetGame, setCell, applyHint, endGame, dispatch } = useGame()
   const [selectedCell, setSelectedCell] = useState<Position | null>(null)
@@ -43,6 +49,7 @@ export const GamePage = memo(function GamePage({
   const [showResumeModal, setShowResumeModal] = useState(false)
   const [savedGameState, setSavedGameState] = useState<GameState | null>(null)
   const initializedRef = useRef(false)
+  const skipResumeCheck = useRef(false)
 
   useEffect(() => {
     if (state.isComplete || state.isPaused || !hasGameStarted) return
@@ -59,6 +66,7 @@ export const GamePage = memo(function GamePage({
       const saved = loadGameState()
       if (saved) {
         queueMicrotask(() => {
+          if (skipResumeCheck.current) return
           setSavedGameState(saved)
           setShowResumeModal(true)
           initializedRef.current = true
@@ -93,6 +101,33 @@ export const GamePage = memo(function GamePage({
     }
   }, [state.isComplete, state.errors, state.maxErrors, timer, state.hints, state.difficulty, onGameFail])
 
+  useEffect(() => {
+    if (!pendingAction || !onActionHandled) return
+    
+    skipResumeCheck.current = true
+    
+    if (pendingAction === 'restart') {
+      clearGameState()
+      resetGame()
+      queueMicrotask(() => {
+        setSelectedCell(null)
+        setTimer(0)
+        setHasGameStarted(true)
+        onActionHandled()
+      })
+    } else if (pendingAction === 'newGame') {
+      clearGameState()
+      dispatch({ type: 'END_GAME' })
+      initializedRef.current = false
+      queueMicrotask(() => {
+        setShowResumeModal(false)
+        setSavedGameState(null)
+        setShowDifficultyModal(true)
+        onActionHandled()
+      })
+    }
+  }, [pendingAction, resetGame, dispatch, onActionHandled])
+
   const handleCellClick = useCallback((row: number, col: number) => {
     if (!state.isComplete) {
       setSelectedCell({ row, col })
@@ -110,10 +145,6 @@ export const GamePage = memo(function GamePage({
     const isError = conflicts.length > 0
 
     setCell(row, col, number)
-
-    if (isError) {
-      dispatch({ type: 'INCREMENT_ERRORS' })
-    }
 
     const newBoard = state.board.map((r, ri) =>
       r.map((c, ci) => {
@@ -144,7 +175,7 @@ export const GamePage = memo(function GamePage({
         })
       }, 100)
     }
-  }, [selectedCell, state, setCell, timer, onGameComplete, dispatch])
+  }, [selectedCell, state, setCell, timer, onGameComplete])
 
   const handleDeleteClick = useCallback(() => {
     if (!selectedCell || state.isComplete) return

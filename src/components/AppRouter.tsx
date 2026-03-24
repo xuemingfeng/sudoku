@@ -3,7 +3,7 @@ import { useNavigation } from '@/context/NavigationContext'
 import { GameProvider } from '@/context/GameContext'
 import { useFirstVisit } from '@/hooks/useFirstVisit'
 import { GuidePage, SuccessPage, FailurePage, GamePage } from '@/components/pages'
-import type { GameResult } from '@/components/pages/GamePage'
+import type { GameResult, PendingAction } from '@/components/pages/GamePage'
 import { getBestRecord, saveBestRecord } from '@/utils/storage'
 
 export const AppRouter = memo(function AppRouter() {
@@ -12,6 +12,7 @@ export const AppRouter = memo(function AppRouter() {
   const [gameResult, setGameResult] = useState<GameResult>(null)
   const [bestRecord, setBestRecordState] = useState<number | null>(null)
   const [isNewRecord, setIsNewRecord] = useState(false)
+  const [pendingAction, setPendingAction] = useState<PendingAction>(null)
 
   useEffect(() => {
     if (!isLoading) {
@@ -78,13 +79,19 @@ export const AppRouter = memo(function AppRouter() {
 
   const handleRestart = useCallback(() => {
     setGameResult(null)
+    setPendingAction('restart')
     navigateTo('game')
   }, [navigateTo])
 
   const handleSelectDifficulty = useCallback(() => {
     setGameResult(null)
+    setPendingAction('newGame')
     navigateTo('game')
   }, [navigateTo])
+
+  const handleActionHandled = useCallback(() => {
+    setPendingAction(null)
+  }, [])
 
   if (isLoading) {
     return (
@@ -116,6 +123,8 @@ export const AppRouter = memo(function AppRouter() {
             <GamePage
               onGameComplete={handleGameComplete}
               onGameFail={handleGameFail}
+              pendingAction={pendingAction}
+              onActionHandled={handleActionHandled}
             />
           </div>
         </GameProvider>
