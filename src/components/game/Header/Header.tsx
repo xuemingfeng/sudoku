@@ -47,6 +47,17 @@ export const Header = memo(function Header({
           <i className="ri-bar-chart-line text-lg sm:text-xl text-purple-600" />
           <span className="ml-1 sm:ml-2 text-base sm:text-lg lg:text-xl font-semibold text-purple-600">{difficultyLabels[difficulty]}</span>
         </div>
+        <div className="flex items-center">
+          <a 
+            href="https://github.com/xuemingfeng/sudoku" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hover:opacity-80 transition-all duration-200"
+            aria-label="GitHub 仓库"
+          >
+            <i className="ri-github-line text-lg sm:text-xl text-slate-600 hover:text-slate-800 hover:scale-105 transition-all duration-200" />
+          </a>
+        </div>
       </div>
     </div>
   )
