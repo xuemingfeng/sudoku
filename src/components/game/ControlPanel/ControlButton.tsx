@@ -26,12 +26,15 @@ export const ControlButton = memo(function ControlButton({
   return (
     <button
       className={`
-        control-button touch-optimized btn-hover-lift
+        control-button touch-optimized
+        ${disabled ? '' : 'btn-hover-lift'}
         flex-1 flex items-center justify-center gap-2
         rounded-xl
-        text-white font-semibold
+        font-semibold
         transition-all duration-200
-        ${disabled ? 'opacity-50 cursor-not-allowed' : `${colorClasses[color]} active:scale-[0.98]`}
+        ${disabled 
+          ? 'bg-slate-200 text-slate-400 cursor-not-allowed' 
+          : `${colorClasses[color]} text-white active:scale-[0.98]`}
       `}
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
