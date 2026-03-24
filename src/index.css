@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import './styles/fonts.css';
-@import 'remixicon/fonts/remixicon.css';
+@import '/fonts/remixicon.css';
 @import './styles/variables.css';
 @import './styles/responsive.css';
 
